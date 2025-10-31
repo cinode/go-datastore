@@ -22,9 +22,9 @@ import (
 	"errors"
 	"io"
 	"testing"
-	"testing/iotest"
 
 	"github.com/cinode/go-datastore/pkg/common"
+	"github.com/cinode/go-datastore/pkg/internal/utilities/errreader"
 	"github.com/stretchr/testify/require"
 )
 
@@ -44,7 +44,7 @@ func TestCreate(t *testing.T) {
 			injectedErr := errors.New("test")
 			r := io.MultiReader(
 				io.LimitReader(rand.Reader, int64(goodBytes)),
-				iotest.ErrReader(injectedErr),
+				errreader.New(injectedErr),
 			)
 
 			dl, err := Create(r)
@@ -98,7 +98,7 @@ func TestReNonce(t *testing.T) {
 			injectedErr := errors.New("test")
 			r := io.MultiReader(
 				io.LimitReader(rand.Reader, int64(goodBytes)),
-				iotest.ErrReader(injectedErr),
+				errreader.New(injectedErr),
 			)
 
 			dl2, err := ReNonce(dl1, r)
@@ -129,7 +129,7 @@ func TestPublisherUpdateLinkData(t *testing.T) {
 
 	t.Run("failed data reader", func(t *testing.T) {
 		injectedErr := errors.New("test")
-		pr2, key2, err := dl.UpdateLinkData(iotest.ErrReader(injectedErr), 3)
+		pr2, key2, err := dl.UpdateLinkData(errreader.New(injectedErr), 3)
 		require.ErrorIs(t, err, injectedErr)
 		require.Nil(t, pr2)
 		require.Nil(t, key2)

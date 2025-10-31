@@ -25,11 +25,11 @@ import (
 	math_rand "math/rand"
 	"sort"
 	"testing"
-	"testing/iotest"
 
 	"github.com/cinode/go-datastore/pkg/blobtypes"
 	"github.com/cinode/go-datastore/pkg/common"
 	"github.com/cinode/go-datastore/pkg/internal/utilities/cipherfactory"
+	"github.com/cinode/go-datastore/pkg/internal/utilities/errreader"
 	"github.com/stretchr/testify/require"
 )
 
@@ -71,7 +71,7 @@ func TestFromPublicData(t *testing.T) {
 			t.Run(fmt.Sprint(validBytes), func(t *testing.T) {
 				rdr := io.MultiReader(
 					bytes.NewReader(data[:validBytes]),
-					iotest.ErrReader(injectedErr),
+					errreader.New(injectedErr),
 				)
 
 				dl, err := FromPublicData(dl.BlobName(), rdr)

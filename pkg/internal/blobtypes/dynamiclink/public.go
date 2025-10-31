@@ -23,11 +23,11 @@ import (
 	"fmt"
 	"hash"
 	"io"
-	"testing/iotest"
 
 	"github.com/cinode/go-datastore/pkg/blobtypes"
 	"github.com/cinode/go-datastore/pkg/common"
 	"github.com/cinode/go-datastore/pkg/internal/utilities/cipherfactory"
+	"github.com/cinode/go-datastore/pkg/internal/utilities/errreader"
 	"github.com/cinode/go-datastore/pkg/internal/utilities/validatingreader"
 )
 
@@ -204,7 +204,7 @@ func FromPublicData(name *common.BlobName, r io.Reader) (*PublicReader, error) {
 	}()
 
 	if err != nil {
-		dl.r = iotest.ErrReader(err)
+		dl.r = errreader.New(err)
 	} else {
 		dl.r = bytes.NewReader(elink)
 	}
