@@ -18,15 +18,9 @@ package datastore
 
 import (
 	"context"
-	"errors"
 	"io"
 
 	"github.com/cinode/go-datastore/pkg/common"
-)
-
-var (
-	// ErrNotFound will be used when blob with given name was not found in datastore
-	ErrNotFound = errors.New("not found")
 )
 
 // DS interface contains the public interface of any conformant datastore

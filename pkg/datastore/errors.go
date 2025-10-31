@@ -1,5 +1,5 @@
 /*
-Copyright © 2022 Bartłomiej Święcki (byo)
+Copyright © 2025 Bartłomiej Święcki (byo)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -19,5 +19,9 @@ package datastore
 import "errors"
 
 var (
+	// ErrUploadInProgress will be used when another upload is already in progress for the same blob
 	ErrUploadInProgress = errors.New("another upload is already in progress")
+
+	// ErrNotFound will be used when blob with given name was not found in datastore
+	ErrNotFound = errors.New("not found")
 )
