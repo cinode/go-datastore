@@ -18,6 +18,7 @@
         "elink",
         "fifos",
         "fsys",
+        "golangci",
         "goveralls",
         "Hasher",
         "homefile",
