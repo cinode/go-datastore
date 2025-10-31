@@ -21,23 +21,17 @@ import (
 	"bytes"
 	"crypto/sha256"
 	_ "embed"
+	"encoding/hex"
 	"fmt"
 	"html/template"
 	"io"
 	"os"
 
+	"github.com/cinode/go-common/blob"
+	"github.com/cinode/go-common/cutl"
 	"github.com/cinode/go-datastore/pkg/blobtypes"
-	"github.com/cinode/go-datastore/pkg/common"
-	"github.com/cinode/go-datastore/pkg/internal/base58"
 	"github.com/cinode/go-datastore/pkg/internal/blobtypes/dynamiclink"
-	"github.com/cinode/go-datastore/pkg/utilities/golang"
 )
-
-func errPanic(err error) {
-	if err != nil {
-		panic(err)
-	}
-}
 
 type blobData struct {
 	Name     string
@@ -48,13 +42,14 @@ type blobData struct {
 func static(data string) blobData {
 	content := []byte(data)
 	hash := sha256.Sum256(content)
-	n, err := common.BlobNameFromHashAndType(hash[:], blobtypes.Static)
-	errPanic(err)
+
+	n, err := blob.NameFromHashAndType(hash[:], blobtypes.Static)
+	cutl.PanicIfError(err)
 
 	return blobData{
 		Name:     n.String(),
-		Data:     base58.Encode(content),
-		Expected: base58.Encode(content),
+		Data:     hex.EncodeToString(content),
+		Expected: hex.EncodeToString(content),
 	}
 }
 
@@ -72,33 +67,33 @@ func dynamicLink(data string, version uint64, seed int) blobData {
 	}
 
 	dl, err := dynamiclink.Create(bytes.NewReader(pseudoRandBuffer))
-	errPanic(err)
+	cutl.PanicIfError(err)
 
 	pr, _, err := dl.UpdateLinkData(bytes.NewBufferString(data), version)
-	errPanic(err)
+	cutl.PanicIfError(err)
 
 	buf, err := io.ReadAll(pr.GetPublicDataReader())
-	errPanic(err)
+	cutl.PanicIfError(err)
 
 	pr, err = dynamiclink.FromPublicData(dl.BlobName(), bytes.NewReader(buf))
-	errPanic(err)
+	cutl.PanicIfError(err)
 
 	elink, err := io.ReadAll(pr.GetEncryptedLinkReader())
-	errPanic(err)
+	cutl.PanicIfError(err)
 
 	return blobData{
 		Name:     dl.BlobName().String(),
-		Data:     base58.Encode(buf),
-		Expected: base58.Encode(elink),
+		Data:     hex.EncodeToString(buf),
+		Expected: hex.EncodeToString(elink),
 	}
 }
 
 //go:embed tesblobs.go.tpl
 var templateString string
-var tmpl = golang.Must(template.New("testblobs").Parse(templateString))
+var tmpl = cutl.Must(template.New("testblobs").Parse(templateString))
 
 func main() {
-	fl := golang.Must(os.Create("../testblobs.go"))
+	fl := cutl.Must(os.Create("../testblobs.go"))
 	defer fl.Close()
 
 	err := tmpl.Execute(fl, map[string]any{
@@ -116,7 +111,7 @@ func main() {
 			dynamicLink("Test3", 20000, 999),
 		},
 	})
-	errPanic(err)
+	cutl.PanicIfError(err)
 
 	fmt.Println("Successfully generated testblobs.go")
 }

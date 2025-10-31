@@ -21,11 +21,11 @@ import (
 	"errors"
 	"io"
 
-	"github.com/cinode/go-datastore/pkg/common"
+	"github.com/cinode/go-common/blob"
 	"github.com/cinode/go-datastore/pkg/internal/blobtypes/dynamiclink"
 )
 
-func (ds *datastore) openDynamicLink(ctx context.Context, name *common.BlobName) (io.ReadCloser, error) {
+func (ds *datastore) openDynamicLink(ctx context.Context, name *blob.Name) (io.ReadCloser, error) {
 	rc, err := ds.s.OpenReadStream(ctx, name)
 	if err != nil {
 		return nil, err
@@ -50,7 +50,7 @@ func (ds *datastore) openDynamicLink(ctx context.Context, name *common.BlobName)
 // read from - only for comparison
 func (ds *datastore) newLinkGreaterThanCurrent(
 	ctx context.Context,
-	name *common.BlobName,
+	name *blob.Name,
 	newLink *dynamiclink.PublicReader,
 ) (
 	bool, error,
@@ -72,7 +72,7 @@ func (ds *datastore) newLinkGreaterThanCurrent(
 	return newLink.GreaterThan(dl), nil
 }
 
-func (ds *datastore) updateDynamicLink(ctx context.Context, name *common.BlobName, updateStream io.Reader) error {
+func (ds *datastore) updateDynamicLink(ctx context.Context, name *blob.Name, updateStream io.Reader) error {
 	ws, err := ds.s.OpenWriteStream(ctx, name)
 	if err != nil {
 		return err

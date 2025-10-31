@@ -21,17 +21,17 @@ import (
 	"io"
 	"testing"
 
-	"github.com/cinode/go-datastore/pkg/common"
-	"github.com/cinode/go-datastore/pkg/internal/picotestify/require"
-	"github.com/cinode/go-datastore/testvectors"
+	"github.com/cinode/go-common/blob"
+	"github.com/cinode/go-common/picotestify/require"
+	"github.com/cinode/go-testvectors/testvectors"
 )
 
 func TestVectors(t *testing.T) {
-	for testCase := range testvectors.AllTestCases {
+	for _, testCase := range testvectors.TestCases {
 		t.Run(testCase.Name, func(t *testing.T) {
 			t.Run("validate public scope", func(t *testing.T) {
 				err := func() error {
-					bn, err := common.BlobNameFromBytes(testCase.BlobName)
+					bn, err := blob.NameFromBytes(testCase.BlobName)
 					if err != nil {
 						return err
 					}
@@ -62,7 +62,7 @@ func TestVectors(t *testing.T) {
 
 			t.Run("validate private scope", func(t *testing.T) {
 				err := func() error {
-					bn, err := common.BlobNameFromBytes(testCase.BlobName)
+					bn, err := blob.NameFromBytes(testCase.BlobName)
 					if err != nil {
 						return err
 					}
@@ -76,7 +76,7 @@ func TestVectors(t *testing.T) {
 					}
 
 					dr, err := pr.GetLinkDataReader(
-						common.BlobKeyFromBytes(testCase.EncryptionKey),
+						blob.KeyFromBytes(testCase.EncryptionKey),
 					)
 					if err != nil {
 						return err

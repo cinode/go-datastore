@@ -13,6 +13,7 @@
         "ciphertext",
         "containerimage",
         "coverprofile",
+        "cutl",
         "dynamiclink",
         "elink",
         "fifos",
@@ -20,13 +21,16 @@
         "goveralls",
         "Hasher",
         "homefile",
+        "picotestify",
         "protobuf",
         "securefifo",
         "shogo",
         "stretchr",
         "subdir",
+        "tesblobs",
         "testblobs",
         "testvectors",
         "validatingreader"
-    ]
+    ],
+    "go.testExplorer.showDynamicSubtestsInEditor": true,
 }

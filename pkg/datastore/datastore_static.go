@@ -22,12 +22,12 @@ import (
 	"crypto/sha256"
 	"io"
 
+	"github.com/cinode/go-common/blob"
 	"github.com/cinode/go-datastore/pkg/blobtypes"
-	"github.com/cinode/go-datastore/pkg/common"
 	"github.com/cinode/go-datastore/pkg/internal/utilities/validatingreader"
 )
 
-func (ds *datastore) openStatic(ctx context.Context, name *common.BlobName) (io.ReadCloser, error) {
+func (ds *datastore) openStatic(ctx context.Context, name *blob.Name) (io.ReadCloser, error) {
 	rc, err := ds.s.OpenReadStream(ctx, name)
 	if err != nil {
 		return nil, err
@@ -47,7 +47,7 @@ func (ds *datastore) openStatic(ctx context.Context, name *common.BlobName) (io.
 	}, nil
 }
 
-func (ds *datastore) updateStatic(ctx context.Context, name *common.BlobName, updateStream io.Reader) error {
+func (ds *datastore) updateStatic(ctx context.Context, name *blob.Name, updateStream io.Reader) error {
 	outputStream, err := ds.s.OpenWriteStream(ctx, name)
 	if err != nil {
 		return err

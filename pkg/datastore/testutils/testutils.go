@@ -21,16 +21,16 @@ import (
 	"crypto/sha256"
 	"io"
 
+	"github.com/cinode/go-common/blob"
+	"github.com/cinode/go-common/cutl"
 	"github.com/cinode/go-datastore/pkg/blobtypes"
-	"github.com/cinode/go-datastore/pkg/common"
-	"github.com/cinode/go-datastore/pkg/utilities/golang"
 )
 
 var (
-	EmptyBlobNameStatic      = golang.Must(common.BlobNameFromHashAndType(sha256.New().Sum(nil), blobtypes.Static))
-	EmptyBlobNameDynamicLink = golang.Must(common.BlobNameFromHashAndType(sha256.New().Sum(nil), blobtypes.DynamicLink))
+	EmptyBlobNameStatic      = cutl.Must(blob.NameFromHashAndType(sha256.New().Sum(nil), blobtypes.Static))
+	EmptyBlobNameDynamicLink = cutl.Must(blob.NameFromHashAndType(sha256.New().Sum(nil), blobtypes.DynamicLink))
 
-	EmptyBlobNamesOfAllTypes = []*common.BlobName{
+	EmptyBlobNamesOfAllTypes = []*blob.Name{
 		EmptyBlobNameStatic,
 		EmptyBlobNameDynamicLink,
 	}

@@ -23,8 +23,8 @@ import (
 	"io"
 	"testing"
 
-	"github.com/cinode/go-datastore/pkg/common"
-	"github.com/cinode/go-datastore/pkg/internal/picotestify/require"
+	"github.com/cinode/go-common/blob"
+	"github.com/cinode/go-common/picotestify/require"
 	"github.com/cinode/go-datastore/pkg/internal/utilities/errreader"
 )
 
@@ -72,7 +72,7 @@ func TestFromAuthInfo(t *testing.T) {
 	t.Run("Invalid auth info", func(t *testing.T) {
 		authInfoBytes := authInfo.Bytes()
 		for i := 0; i < len(authInfoBytes)-1; i++ {
-			brokenAuthInfo := common.AuthInfoFromBytes(authInfoBytes[:i])
+			brokenAuthInfo := blob.AuthInfoFromBytes(authInfoBytes[:i])
 			dl2, err := FromAuthInfo(brokenAuthInfo)
 			require.ErrorIs(t, err, ErrInvalidDynamicLinkAuthInfo)
 			require.Nil(t, dl2)

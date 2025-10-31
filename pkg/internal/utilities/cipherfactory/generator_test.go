@@ -19,8 +19,8 @@ package cipherfactory
 import (
 	"testing"
 
+	"github.com/cinode/go-common/picotestify/require"
 	"github.com/cinode/go-datastore/pkg/blobtypes"
-	"github.com/cinode/go-datastore/pkg/internal/picotestify/require"
 )
 
 func TestGenerator(t *testing.T) {

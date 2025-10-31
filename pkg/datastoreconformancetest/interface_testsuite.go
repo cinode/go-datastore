@@ -25,13 +25,13 @@ import (
 	"sync"
 	"testing"
 
+	"github.com/cinode/go-common/blob"
+	"github.com/cinode/go-common/picotestify/require"
+	"github.com/cinode/go-common/picotestify/suite"
 	"github.com/cinode/go-datastore/pkg/blobtypes"
-	"github.com/cinode/go-datastore/pkg/common"
 	"github.com/cinode/go-datastore/pkg/datastore"
 	"github.com/cinode/go-datastore/pkg/datastore/testutils"
 	"github.com/cinode/go-datastore/pkg/internal/blobtypes/dynamiclink"
-	"github.com/cinode/go-datastore/pkg/internal/picotestify/require"
-	"github.com/cinode/go-datastore/pkg/internal/picotestify/suite"
 )
 
 type DatastoreTestSuite struct {
@@ -79,7 +79,7 @@ func (s *DatastoreTestSuite) TestOpenNonExisting() {
 func (s *DatastoreTestSuite) TestOpenInvalidBlobType() {
 	t := s.T()
 
-	bn, err := common.BlobNameFromHashAndType(sha256.New().Sum(nil), common.NewBlobType(0xFF))
+	bn, err := blob.NameFromHashAndType(sha256.New().Sum(nil), blob.NewType(0xFF))
 	require.NoError(t, err)
 
 	r, err := s.ds.Open(t.Context(), bn)

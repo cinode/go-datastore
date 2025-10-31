@@ -20,7 +20,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/cinode/go-datastore/pkg/internal/picotestify/require"
+	"github.com/cinode/go-common/picotestify/require"
 )
 
 func TestErrReader(t *testing.T) {

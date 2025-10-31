@@ -23,8 +23,8 @@ import (
 	"errors"
 	"io"
 
+	"github.com/cinode/go-common/blob"
 	"github.com/cinode/go-datastore/pkg/blobtypes"
-	"github.com/cinode/go-datastore/pkg/common"
 	"github.com/cinode/go-datastore/pkg/internal/utilities/cipherfactory"
 )
 
@@ -66,7 +66,7 @@ func Create(randSource io.Reader) (*Publisher, error) {
 	}, nil
 }
 
-func FromAuthInfo(authInfo *common.AuthInfo) (*Publisher, error) {
+func FromAuthInfo(authInfo *blob.AuthInfo) (*Publisher, error) {
 	authInfoBytes := authInfo.Bytes()
 	if len(authInfoBytes) != 1+ed25519.SeedSize+8 || authInfoBytes[0] != 0 {
 		return nil, ErrInvalidDynamicLinkAuthInfo
@@ -100,15 +100,15 @@ func ReNonce(p *Publisher, randSource io.Reader) (*Publisher, error) {
 	}, nil
 }
 
-func (dl *Publisher) AuthInfo() *common.AuthInfo {
+func (dl *Publisher) AuthInfo() *blob.AuthInfo {
 	var ret [1 + ed25519.SeedSize + 8]byte
 	ret[0] = reservedByteValue
 	copy(ret[1:], dl.privKey.Seed())
 	binary.BigEndian.PutUint64(ret[1+ed25519.SeedSize:], dl.nonce)
-	return common.AuthInfoFromBytes(ret[:])
+	return blob.AuthInfoFromBytes(ret[:])
 }
 
-func (dl *Publisher) calculateEncryptionKey() (key *common.BlobKey, signature []byte) {
+func (dl *Publisher) calculateEncryptionKey() (key *blob.Key, signature []byte) {
 	dataSeed := append(
 		[]byte{signatureForEncryptionKeyGeneration},
 		dl.BlobName().Bytes()...,
@@ -124,12 +124,12 @@ func (dl *Publisher) calculateEncryptionKey() (key *common.BlobKey, signature []
 	return key, signature
 }
 
-func (dl *Publisher) EncryptionKey() *common.BlobKey {
+func (dl *Publisher) EncryptionKey() *blob.Key {
 	key, _ := dl.calculateEncryptionKey()
 	return key
 }
 
-func (dl *Publisher) UpdateLinkData(r io.Reader, version uint64) (*PublicReader, *common.BlobKey, error) {
+func (dl *Publisher) UpdateLinkData(r io.Reader, version uint64) (*PublicReader, *blob.Key, error) {
 	encryptionKey, kvb := dl.calculateEncryptionKey()
 
 	// key validation block precedes the link data

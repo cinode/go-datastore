@@ -22,7 +22,7 @@ import (
 	"io"
 	"sync"
 
-	"github.com/cinode/go-datastore/pkg/common"
+	"github.com/cinode/go-common/blob"
 )
 
 const (
@@ -58,7 +58,7 @@ func (m *memory) Address() string {
 	return memoryPrefix
 }
 
-func (m *memory) OpenReadStream(ctx context.Context, name *common.BlobName) (io.ReadCloser, error) {
+func (m *memory) OpenReadStream(ctx context.Context, name *blob.Name) (io.ReadCloser, error) {
 	m.rw.RLock()
 	defer m.rw.RUnlock()
 
@@ -96,7 +96,7 @@ func (w *memoryWriteCloser) Close() error {
 	return nil
 }
 
-func (m *memory) OpenWriteStream(ctx context.Context, name *common.BlobName) (WriteCloseCanceller, error) {
+func (m *memory) OpenWriteStream(ctx context.Context, name *blob.Name) (WriteCloseCanceller, error) {
 	m.rw.Lock()
 	defer m.rw.Unlock()
 
@@ -115,7 +115,7 @@ func (m *memory) OpenWriteStream(ctx context.Context, name *common.BlobName) (Wr
 	}, nil
 }
 
-func (m *memory) Exists(ctx context.Context, n *common.BlobName) (bool, error) {
+func (m *memory) Exists(ctx context.Context, n *blob.Name) (bool, error) {
 	m.rw.RLock()
 	defer m.rw.RUnlock()
 
@@ -126,7 +126,7 @@ func (m *memory) Exists(ctx context.Context, n *common.BlobName) (bool, error) {
 	return true, nil
 }
 
-func (m *memory) Delete(ctx context.Context, n *common.BlobName) error {
+func (m *memory) Delete(ctx context.Context, n *blob.Name) error {
 	m.rw.Lock()
 	defer m.rw.Unlock()
 

@@ -17,37 +17,38 @@ limitations under the License.
 package testutils
 
 import (
-	"github.com/cinode/go-datastore/pkg/common"
-	"github.com/cinode/go-datastore/pkg/utilities/golang"
-	"github.com/cinode/go-datastore/pkg/internal/base58"
+	"encoding/hex"
+
+	"github.com/cinode/go-common/blob"
+	"github.com/cinode/go-common/cutl"
 )
 
 // nolint:lll // test data vectors
 var TestBlobs = []struct {
-	Name     *common.BlobName
+	Name     *blob.Name
 	Data     []byte
 	Expected []byte
 }{
 {{- range .TestBlobs }}
 	{
-		golang.Must(common.BlobNameFromString("{{ .Name }}")),
-		golang.Must(base58.Decode("{{ .Data }}")),
-		golang.Must(base58.Decode("{{ .Expected }}")),
+		cutl.Must(blob.NameFromString("{{ .Name }}")),
+		cutl.Must(hex.DecodeString("{{ .Data }}")),
+		cutl.Must(hex.DecodeString("{{ .Expected }}")),
 	},
 {{- end }}
 }
 
 // nolint:lll // test data vectors
 var DynamicLinkPropagationData = []struct {
-	Name     *common.BlobName
+	Name     *blob.Name
 	Data     []byte
 	Expected []byte
 }{
 {{- range .DynamicLinkPropagationData }}
 	{
-		golang.Must(common.BlobNameFromString("{{ .Name }}")),
-		base58.Decode("{{ .Data }}"),
-		base58.Decode("{{ .Expected }}"),
+		cutl.Must(blob.NameFromString("{{ .Name }}")),
+		cutl.Must(hex.DecodeString("{{ .Data }}")),
+		cutl.Must(hex.DecodeString("{{ .Expected }}")),
 	},
 {{- end }}
 }

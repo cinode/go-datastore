@@ -20,8 +20,8 @@ import (
 	"context"
 	"io"
 
+	"github.com/cinode/go-common/blob"
 	"github.com/cinode/go-datastore/pkg/blobtypes"
-	"github.com/cinode/go-datastore/pkg/common"
 )
 
 type datastore struct {
@@ -38,7 +38,7 @@ func (ds *datastore) Address() string {
 	return ds.s.Address()
 }
 
-func (ds *datastore) Open(ctx context.Context, name *common.BlobName) (io.ReadCloser, error) {
+func (ds *datastore) Open(ctx context.Context, name *blob.Name) (io.ReadCloser, error) {
 	switch name.Type() {
 	case blobtypes.Static:
 		return ds.openStatic(ctx, name)
@@ -49,7 +49,7 @@ func (ds *datastore) Open(ctx context.Context, name *common.BlobName) (io.ReadCl
 	}
 }
 
-func (ds *datastore) Update(ctx context.Context, name *common.BlobName, updateStream io.Reader) error {
+func (ds *datastore) Update(ctx context.Context, name *blob.Name, updateStream io.Reader) error {
 	switch name.Type() {
 	case blobtypes.Static:
 		return ds.updateStatic(ctx, name, updateStream)
@@ -60,11 +60,11 @@ func (ds *datastore) Update(ctx context.Context, name *common.BlobName, updateSt
 	}
 }
 
-func (ds *datastore) Exists(ctx context.Context, name *common.BlobName) (bool, error) {
+func (ds *datastore) Exists(ctx context.Context, name *blob.Name) (bool, error) {
 	return ds.s.Exists(ctx, name)
 }
 
-func (ds *datastore) Delete(ctx context.Context, name *common.BlobName) error {
+func (ds *datastore) Delete(ctx context.Context, name *blob.Name) error {
 	return ds.s.Delete(ctx, name)
 }
 

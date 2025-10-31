@@ -19,8 +19,8 @@ package blobtypes
 import (
 	"testing"
 
-	"github.com/cinode/go-datastore/pkg/common"
-	"github.com/cinode/go-datastore/pkg/internal/picotestify/require"
+	"github.com/cinode/go-common/blob"
+	"github.com/cinode/go-common/picotestify/require"
 )
 
 func TestToName(t *testing.T) {
@@ -31,6 +31,6 @@ func TestToName(t *testing.T) {
 	})
 	t.Run("invalid type", func(t *testing.T) {
 		require.Equal(t, "Invalid(0)", ToName(Invalid))
-		require.Equal(t, "Invalid(255)", ToName(common.NewBlobType(255)))
+		require.Equal(t, "Invalid(255)", ToName(blob.NewType(255)))
 	})
 }

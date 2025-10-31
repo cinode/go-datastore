@@ -20,7 +20,7 @@ import (
 	"context"
 	"io"
 
-	"github.com/cinode/go-datastore/pkg/common"
+	"github.com/cinode/go-common/blob"
 )
 
 // DS interface contains the public interface of any conformant datastore
@@ -59,20 +59,20 @@ type DS interface {
 	// If a non-nil error is returned, the writer will be nil. Otherwise it
 	// is necessary to call the `Close` on the returned reader once done
 	// with the reader.
-	Open(ctx context.Context, name *common.BlobName) (io.ReadCloser, error)
+	Open(ctx context.Context, name *blob.Name) (io.ReadCloser, error)
 
 	// Update retrieves an update for given blob. The data is read from given
 	// reader until it returns either EOF, ending successful save, or any other
 	// error which will cancel the save - in such case this error will be
 	// returned from this function. If the data does not pass validation,
 	// ErrInvalidData will be returned.
-	Update(ctx context.Context, name *common.BlobName, r io.Reader) error
+	Update(ctx context.Context, name *blob.Name, r io.Reader) error
 
 	// Exists does check whether blob of given name exists in the datastore.
 	// Partially written blobs are equal to non-existing ones. Boolean value
 	// returned indicates whether the blob exists or not, non-nil error indicates
 	// that there was an error while trying to check blob's existence.
-	Exists(ctx context.Context, name *common.BlobName) (bool, error)
+	Exists(ctx context.Context, name *blob.Name) (bool, error)
 
 	// Delete tries to remove blob with given name from the datastore.
 	// If blob does not exist (which includes partially written blobs)
@@ -81,5 +81,5 @@ type DS interface {
 	// read the blob data. After the `Delete` call succeeds, trying to read
 	// the blob with the `Open` should end up with an ErrNotFound error
 	// until the blob is updated again with a successful `Update` call.
-	Delete(ctx context.Context, name *common.BlobName) error
+	Delete(ctx context.Context, name *blob.Name) error
 }

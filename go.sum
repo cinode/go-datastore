@@ -1,3 +1,7 @@
+github.com/cinode/go-common v0.0.0-20251031214056-c3a6d95d1810 h1:1IakJkbW/5jUU/CktDiRjPd1sTW0nxIexpgUWigpAXM=
+github.com/cinode/go-common v0.0.0-20251031214056-c3a6d95d1810/go.mod h1:3OWIcbBwu/xmycwRy9LpAJrKFuTVbrkXk4epOHRivYw=
+github.com/cinode/go-testvectors v0.0.0-20251031214716-7bd08cc61fd1 h1:xtmnidyMf4DdB2lgcuhuCQcyzpDD30pXFdE3meaTzbQ=
+github.com/cinode/go-testvectors v0.0.0-20251031214716-7bd08cc61fd1/go.mod h1:3+KwGRMjSDOsm24w/MPEuKmLM8eo9wPW24gxb+bA7ng=
 golang.org/x/crypto v0.43.0 h1:dduJYIi3A3KOfdGOHX8AVZ/jGiyPa3IbBozJ5kNuE04=
 golang.org/x/crypto v0.43.0/go.mod h1:BFbav4mRNlXJL4wNeejLpWxB7wMbc79PdRGhWKncxR0=
 golang.org/x/exp v0.0.0-20251017212417-90e834f514db h1:by6IehL4BH5k3e3SJmcoNbOobMey2SLpAF79iPOEBvw=

@@ -20,7 +20,7 @@ import (
 	"context"
 	"io"
 
-	"github.com/cinode/go-datastore/pkg/common"
+	"github.com/cinode/go-common/blob"
 )
 
 type WriteCloseCanceller interface {
@@ -31,8 +31,8 @@ type WriteCloseCanceller interface {
 type StorageBackend interface {
 	Kind() string
 	Address() string
-	OpenReadStream(ctx context.Context, name *common.BlobName) (io.ReadCloser, error)
-	OpenWriteStream(ctx context.Context, name *common.BlobName) (WriteCloseCanceller, error)
-	Exists(ctx context.Context, name *common.BlobName) (bool, error)
-	Delete(ctx context.Context, name *common.BlobName) error
+	OpenReadStream(ctx context.Context, name *blob.Name) (io.ReadCloser, error)
+	OpenWriteStream(ctx context.Context, name *blob.Name) (WriteCloseCanceller, error)
+	Exists(ctx context.Context, name *blob.Name) (bool, error)
+	Delete(ctx context.Context, name *blob.Name) error
 }

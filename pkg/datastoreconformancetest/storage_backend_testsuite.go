@@ -22,12 +22,12 @@ import (
 	"io"
 	"testing"
 
+	"github.com/cinode/go-common/blob"
+	"github.com/cinode/go-common/picotestify/require"
+	"github.com/cinode/go-common/picotestify/suite"
 	"github.com/cinode/go-datastore/pkg/blobtypes"
-	"github.com/cinode/go-datastore/pkg/common"
 	"github.com/cinode/go-datastore/pkg/datastore"
 	"github.com/cinode/go-datastore/pkg/datastore/testutils"
-	"github.com/cinode/go-datastore/pkg/internal/picotestify/require"
-	"github.com/cinode/go-datastore/pkg/internal/picotestify/suite"
 )
 
 type StorageBackendTestSuite struct {
@@ -151,7 +151,7 @@ func (s *StorageBackendTestSuite) TestStorageSaveOpenCancelSuccess() {
 func (s *StorageBackendTestSuite) TestStorageDelete() {
 	t := s.T()
 
-	blobNames := []*common.BlobName{}
+	blobNames := []*blob.Name{}
 	blobDatas := [][]byte{}
 
 	t.Run("generate test data", func(t *testing.T) {
@@ -161,7 +161,7 @@ func (s *StorageBackendTestSuite) TestStorageDelete() {
 			"third",
 		} {
 			h := sha256.Sum256([]byte(d))
-			bn, err := common.BlobNameFromHashAndType(h[:], blobtypes.Static)
+			bn, err := blob.NameFromHashAndType(h[:], blobtypes.Static)
 			require.NoError(t, err)
 
 			blobNames = append(blobNames, bn)

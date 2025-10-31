@@ -19,9 +19,9 @@ package datastoreconformancetest_test
 import (
 	"testing"
 
+	"github.com/cinode/go-common/picotestify/suite"
 	"github.com/cinode/go-datastore/pkg/datastore"
 	"github.com/cinode/go-datastore/pkg/datastoreconformancetest"
-	"github.com/cinode/go-datastore/pkg/internal/picotestify/suite"
 )
 
 func TestInMemoryDatastoreTestSuite(t *testing.T) {
