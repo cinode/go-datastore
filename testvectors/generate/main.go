@@ -39,6 +39,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/cinode/go-datastore/testvectors/internal"
 	"golang.org/x/crypto/chacha20"
 )
 
@@ -46,20 +47,7 @@ func main() {
 	generateTestVectorsForDynamicLinks()
 }
 
-type TestCase struct {
-	Name             string   `json:"name"`
-	Description      string   `json:"description"`
-	Details          string   `json:"-"`
-	DetailsLines     []string `json:"details,omitempty"`
-	WhenAdded        string   `json:"added_at"`
-	BlobName         []byte   `json:"blob_name"`
-	EncryptionKey    []byte   `json:"encryption_key"`
-	UpdateDataset    []byte   `json:"update_dataset"`
-	DecryptedDataset []byte   `json:"decrypted_dataset"`
-	ValidPublicly    bool     `json:"valid_publicly"`
-	ValidPrivately   bool     `json:"valid_privately"`
-	GoErrorContains  string   `json:"go_error_contains,omitempty"`
-}
+type TestCase = internal.TestCase
 
 type gp struct {
 	reservedByte   *byte
@@ -312,7 +300,7 @@ var (
 )
 
 func writeLinkData(tc TestCase) error {
-	fName := tc.Name + ".json"
+	fName := "../" + tc.Name + ".json"
 	err := os.MkdirAll(filepath.Dir(fName), 0o777)
 	if err != nil {
 		return err

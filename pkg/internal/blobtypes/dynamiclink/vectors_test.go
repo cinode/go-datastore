@@ -18,52 +18,16 @@ package dynamiclink
 
 import (
 	"bytes"
-	"encoding/json"
 	"io"
-	"io/fs"
-	"os"
-	"path/filepath"
-	"strings"
 	"testing"
 
 	"github.com/cinode/go-datastore/pkg/common"
+	"github.com/cinode/go-datastore/testvectors"
 	"github.com/stretchr/testify/require"
 )
 
 func TestVectors(t *testing.T) {
-	err := filepath.WalkDir("../../../../testvectors/dynamic", func(path string, d fs.DirEntry, err error) error {
-		if err != nil {
-			return err
-		}
-		if d.IsDir() || !strings.HasSuffix(path, ".json") {
-			return nil
-		}
-
-		testCase := struct {
-			Name             string   `json:"name"`
-			Description      string   `json:"description"`
-			GoErrorContains  string   `json:"go_error_contains"`
-			Details          []string `json:"details"`
-			BlobName         []byte   `json:"blob_name"`
-			EncryptionKey    []byte   `json:"encryption_key"`
-			UpdateDataset    []byte   `json:"update_dataset"`
-			DecryptedDataset []byte   `json:"decrypted_dataset"`
-			ValidPublicly    bool     `json:"valid_publicly"`
-			ValidPrivately   bool     `json:"valid_privately"`
-		}{}
-
-		data, err := os.ReadFile(path)
-		if err != nil {
-			return err
-		}
-
-		err = json.Unmarshal(data, &testCase)
-		if err != nil {
-			return err
-		}
-
-		det := strings.Join(testCase.Details, "\n")
-
+	for testCase := range testvectors.AllTestCases {
 		t.Run(testCase.Name, func(t *testing.T) {
 			t.Run("validate public scope", func(t *testing.T) {
 				err := func() error {
@@ -90,9 +54,9 @@ func TestVectors(t *testing.T) {
 				}()
 
 				if testCase.ValidPublicly {
-					require.NoError(t, err, det)
+					require.NoError(t, err, testCase.Details)
 				} else {
-					require.ErrorContains(t, err, testCase.GoErrorContains, det)
+					require.ErrorContains(t, err, testCase.GoErrorContains, testCase.Details)
 				}
 			})
 
@@ -130,14 +94,11 @@ func TestVectors(t *testing.T) {
 				}()
 
 				if testCase.ValidPrivately {
-					require.NoError(t, err, det)
+					require.NoError(t, err, testCase.Details)
 				} else {
-					require.ErrorContains(t, err, testCase.GoErrorContains, det)
+					require.ErrorContains(t, err, testCase.GoErrorContains, testCase.Details)
 				}
 			})
 		})
-
-		return nil
-	})
-	require.NoError(t, err)
+	}
 }
