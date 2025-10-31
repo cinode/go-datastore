@@ -21,12 +21,11 @@ import (
 	"context"
 	"errors"
 	"io"
-	"io/fs"
 	"testing"
 
-	"github.com/cinode/go/pkg/blobtypes"
-	"github.com/cinode/go/pkg/common"
-	"github.com/cinode/go/pkg/datastore/testutils"
+	"github.com/cinode/go-datastore/pkg/blobtypes"
+	"github.com/cinode/go-datastore/pkg/common"
+	"github.com/cinode/go-datastore/pkg/datastore/testutils"
 	"github.com/stretchr/testify/require"
 )
 
@@ -139,16 +138,4 @@ func TestDatastoreDetectCorruptedRead(t *testing.T) {
 
 	err = r.Close()
 	require.NoError(t, err)
-}
-
-func TestInvalidInFileSystemParameters(t *testing.T) {
-	ds, err := InFileSystem("/some:invalid;path?*")
-	require.IsType(t, &fs.PathError{}, err)
-	require.Nil(t, ds)
-}
-
-func TestInvalidInRawFileSystemParameters(t *testing.T) {
-	ds, err := InRawFileSystem("/some:invalid;path?*")
-	require.IsType(t, &fs.PathError{}, err)
-	require.Nil(t, ds)
 }

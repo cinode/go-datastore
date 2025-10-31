@@ -26,10 +26,10 @@ import (
 	"io"
 	"os"
 
-	"github.com/cinode/go/pkg/blobtypes"
-	"github.com/cinode/go/pkg/common"
-	"github.com/cinode/go/pkg/internal/blobtypes/dynamiclink"
-	"github.com/cinode/go/pkg/utilities/golang"
+	"github.com/cinode/go-datastore/pkg/blobtypes"
+	"github.com/cinode/go-datastore/pkg/common"
+	"github.com/cinode/go-datastore/pkg/internal/blobtypes/dynamiclink"
+	"github.com/cinode/go-datastore/pkg/utilities/golang"
 	"github.com/jbenet/go-base58"
 )
 

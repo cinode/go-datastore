@@ -23,7 +23,7 @@ import (
 	"io"
 	"testing"
 
-	"github.com/cinode/go/pkg/internal/utilities/validatingreader"
+	"github.com/cinode/go-datastore/pkg/internal/utilities/validatingreader"
 	"github.com/stretchr/testify/require"
 )
 

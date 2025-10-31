@@ -21,9 +21,9 @@ import (
 	"crypto/sha256"
 	"io"
 
-	"github.com/cinode/go/pkg/blobtypes"
-	"github.com/cinode/go/pkg/common"
-	"github.com/cinode/go/pkg/utilities/golang"
+	"github.com/cinode/go-datastore/pkg/blobtypes"
+	"github.com/cinode/go-datastore/pkg/common"
+	"github.com/cinode/go-datastore/pkg/utilities/golang"
 )
 
 var (

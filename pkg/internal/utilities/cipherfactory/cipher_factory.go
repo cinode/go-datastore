@@ -22,7 +22,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/cinode/go/pkg/common"
+	"github.com/cinode/go-datastore/pkg/common"
 	"golang.org/x/crypto/chacha20"
 )
 

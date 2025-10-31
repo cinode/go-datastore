@@ -22,15 +22,15 @@ import (
 	"io"
 	"testing"
 
-	"github.com/cinode/go/pkg/blobtypes"
-	"github.com/cinode/go/pkg/common"
-	"github.com/cinode/go/pkg/datastore/testutils"
+	"github.com/cinode/go-datastore/pkg/blobtypes"
+	"github.com/cinode/go-datastore/pkg/common"
+	"github.com/cinode/go-datastore/pkg/datastore/testutils"
 	"github.com/stretchr/testify/require"
 )
 
 func allTestStorages(t *testing.T) []storage {
 	return []storage{
-		temporaryFS(t),
+		// temporaryFS(t),	// TODO: Extract to generic test suite?
 		temporaryMemory(t),
 	}
 }

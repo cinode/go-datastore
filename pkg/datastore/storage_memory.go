@@ -22,7 +22,11 @@ import (
 	"io"
 	"sync"
 
-	"github.com/cinode/go/pkg/common"
+	"github.com/cinode/go-datastore/pkg/common"
+)
+
+const (
+	memoryPrefix = "memory://"
 )
 
 type memory struct {

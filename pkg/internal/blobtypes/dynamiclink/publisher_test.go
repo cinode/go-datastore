@@ -24,7 +24,7 @@ import (
 	"testing"
 	"testing/iotest"
 
-	"github.com/cinode/go/pkg/common"
+	"github.com/cinode/go-datastore/pkg/common"
 	"github.com/stretchr/testify/require"
 )
 

@@ -23,9 +23,9 @@ import (
 	"errors"
 	"io"
 
-	"github.com/cinode/go/pkg/blobtypes"
-	"github.com/cinode/go/pkg/common"
-	"github.com/cinode/go/pkg/internal/utilities/cipherfactory"
+	"github.com/cinode/go-datastore/pkg/blobtypes"
+	"github.com/cinode/go-datastore/pkg/common"
+	"github.com/cinode/go-datastore/pkg/internal/utilities/cipherfactory"
 )
 
 var (

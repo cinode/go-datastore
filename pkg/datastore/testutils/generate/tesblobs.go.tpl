@@ -17,8 +17,8 @@ limitations under the License.
 package testutils
 
 import (
-	"github.com/cinode/go/pkg/common"
-	"github.com/cinode/go/pkg/utilities/golang"
+	"github.com/cinode/go-datastore/pkg/common"
+	"github.com/cinode/go-datastore/pkg/utilities/golang"
 	"github.com/jbenet/go-base58"
 )
 

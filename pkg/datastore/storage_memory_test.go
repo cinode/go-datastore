@@ -20,6 +20,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/suite"
 )
 
 func temporaryMemory(_ *testing.T) *memory {
@@ -29,4 +30,10 @@ func temporaryMemory(_ *testing.T) *memory {
 func TestMemoryStorageKind(t *testing.T) {
 	m := temporaryMemory(t)
 	require.Equal(t, "Memory", m.kind())
+}
+
+func TestInMemoryDatastoreTestSuite(t *testing.T) {
+	suite.Run(t, &TestSuite{
+		CreateDS: func() (DS, error) { return InMemory(), nil },
+	})
 }
