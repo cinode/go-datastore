@@ -28,7 +28,7 @@ import (
 )
 
 func (ds *datastore) openStatic(ctx context.Context, name *common.BlobName) (io.ReadCloser, error) {
-	rc, err := ds.s.openReadStream(ctx, name)
+	rc, err := ds.s.OpenReadStream(ctx, name)
 	if err != nil {
 		return nil, err
 	}
@@ -48,7 +48,7 @@ func (ds *datastore) openStatic(ctx context.Context, name *common.BlobName) (io.
 }
 
 func (ds *datastore) updateStatic(ctx context.Context, name *common.BlobName, updateStream io.Reader) error {
-	outputStream, err := ds.s.openWriteStream(ctx, name)
+	outputStream, err := ds.s.OpenWriteStream(ctx, name)
 	if err != nil {
 		return err
 	}

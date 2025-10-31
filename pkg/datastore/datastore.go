@@ -25,17 +25,17 @@ import (
 )
 
 type datastore struct {
-	s storage
+	s StorageBackend
 }
 
 var _ DS = (*datastore)(nil)
 
 func (ds *datastore) Kind() string {
-	return ds.s.kind()
+	return ds.s.Kind()
 }
 
 func (ds *datastore) Address() string {
-	return ds.s.address()
+	return ds.s.Address()
 }
 
 func (ds *datastore) Open(ctx context.Context, name *common.BlobName) (io.ReadCloser, error) {
@@ -61,11 +61,11 @@ func (ds *datastore) Update(ctx context.Context, name *common.BlobName, updateSt
 }
 
 func (ds *datastore) Exists(ctx context.Context, name *common.BlobName) (bool, error) {
-	return ds.s.exists(ctx, name)
+	return ds.s.Exists(ctx, name)
 }
 
 func (ds *datastore) Delete(ctx context.Context, name *common.BlobName) error {
-	return ds.s.delete(ctx, name)
+	return ds.s.Delete(ctx, name)
 }
 
 // InMemory constructs an in-memory datastore
@@ -73,5 +73,5 @@ func (ds *datastore) Delete(ctx context.Context, name *common.BlobName) error {
 // The content is lost if the datastore is destroyed (either by garbage collection
 // or by program termination)
 func InMemory() DS {
-	return &datastore{s: newStorageMemory()}
+	return &datastore{s: NewInMemoryStorageBackend()}
 }

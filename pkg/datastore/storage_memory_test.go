@@ -23,13 +23,13 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-func temporaryMemory(_ *testing.T) *memory {
-	return newStorageMemory()
+func temporaryMemory(_ *testing.T) StorageBackend {
+	return NewInMemoryStorageBackend()
 }
 
 func TestMemoryStorageKind(t *testing.T) {
 	m := temporaryMemory(t)
-	require.Equal(t, "Memory", m.kind())
+	require.Equal(t, "Memory", m.Kind())
 }
 
 func TestInMemoryDatastoreTestSuite(t *testing.T) {

@@ -26,7 +26,7 @@ import (
 )
 
 func (ds *datastore) openDynamicLink(ctx context.Context, name *common.BlobName) (io.ReadCloser, error) {
-	rc, err := ds.s.openReadStream(ctx, name)
+	rc, err := ds.s.OpenReadStream(ctx, name)
 	if err != nil {
 		return nil, err
 	}
@@ -55,7 +55,7 @@ func (ds *datastore) newLinkGreaterThanCurrent(
 ) (
 	bool, error,
 ) {
-	rc, err := ds.s.openReadStream(ctx, name)
+	rc, err := ds.s.OpenReadStream(ctx, name)
 	if errors.Is(err, ErrNotFound) {
 		return true, nil
 	}
@@ -73,7 +73,7 @@ func (ds *datastore) newLinkGreaterThanCurrent(
 }
 
 func (ds *datastore) updateDynamicLink(ctx context.Context, name *common.BlobName, updateStream io.Reader) error {
-	ws, err := ds.s.openWriteStream(ctx, name)
+	ws, err := ds.s.OpenWriteStream(ctx, name)
 	if err != nil {
 		return err
 	}

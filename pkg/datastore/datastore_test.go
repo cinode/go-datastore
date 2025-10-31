@@ -38,22 +38,22 @@ type mockStore struct {
 	fDelete          func(ctx context.Context, name *common.BlobName) error
 }
 
-func (s *mockStore) kind() string {
+func (s *mockStore) Kind() string {
 	return s.fKind()
 }
-func (s *mockStore) address() string {
+func (s *mockStore) Address() string {
 	return s.fAddress()
 }
-func (s *mockStore) openReadStream(ctx context.Context, name *common.BlobName) (io.ReadCloser, error) {
+func (s *mockStore) OpenReadStream(ctx context.Context, name *common.BlobName) (io.ReadCloser, error) {
 	return s.fOpenReadStream(ctx, name)
 }
-func (s *mockStore) openWriteStream(ctx context.Context, name *common.BlobName) (WriteCloseCanceller, error) {
+func (s *mockStore) OpenWriteStream(ctx context.Context, name *common.BlobName) (WriteCloseCanceller, error) {
 	return s.fOpenWriteStream(ctx, name)
 }
-func (s *mockStore) exists(ctx context.Context, name *common.BlobName) (bool, error) {
+func (s *mockStore) Exists(ctx context.Context, name *common.BlobName) (bool, error) {
 	return s.fExists(ctx, name)
 }
-func (s *mockStore) delete(ctx context.Context, name *common.BlobName) error {
+func (s *mockStore) Delete(ctx context.Context, name *common.BlobName) error {
 	return s.fDelete(ctx, name)
 }
 

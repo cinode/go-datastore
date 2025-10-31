@@ -28,11 +28,11 @@ type WriteCloseCanceller interface {
 	Cancel()
 }
 
-type storage interface {
-	kind() string
-	address() string
-	openReadStream(ctx context.Context, name *common.BlobName) (io.ReadCloser, error)
-	openWriteStream(ctx context.Context, name *common.BlobName) (WriteCloseCanceller, error)
-	exists(ctx context.Context, name *common.BlobName) (bool, error)
-	delete(ctx context.Context, name *common.BlobName) error
+type StorageBackend interface {
+	Kind() string
+	Address() string
+	OpenReadStream(ctx context.Context, name *common.BlobName) (io.ReadCloser, error)
+	OpenWriteStream(ctx context.Context, name *common.BlobName) (WriteCloseCanceller, error)
+	Exists(ctx context.Context, name *common.BlobName) (bool, error)
+	Delete(ctx context.Context, name *common.BlobName) error
 }
