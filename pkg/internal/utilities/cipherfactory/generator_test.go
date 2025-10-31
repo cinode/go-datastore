@@ -20,7 +20,7 @@ import (
 	"testing"
 
 	"github.com/cinode/go-datastore/pkg/blobtypes"
-	"github.com/stretchr/testify/require"
+	"github.com/cinode/go-datastore/pkg/internal/picotestify/require"
 )
 
 func TestGenerator(t *testing.T) {

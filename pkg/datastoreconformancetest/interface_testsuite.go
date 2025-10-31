@@ -18,19 +18,20 @@ package datastoreconformancetest
 
 import (
 	"bytes"
-	"context"
 	"crypto/sha256"
 	"errors"
 	"fmt"
 	"io"
 	"sync"
+	"testing"
 
 	"github.com/cinode/go-datastore/pkg/blobtypes"
 	"github.com/cinode/go-datastore/pkg/common"
 	"github.com/cinode/go-datastore/pkg/datastore"
 	"github.com/cinode/go-datastore/pkg/datastore/testutils"
 	"github.com/cinode/go-datastore/pkg/internal/blobtypes/dynamiclink"
-	"github.com/stretchr/testify/suite"
+	"github.com/cinode/go-datastore/pkg/internal/picotestify/require"
+	"github.com/cinode/go-datastore/pkg/internal/picotestify/suite"
 )
 
 type DatastoreTestSuite struct {
@@ -55,190 +56,212 @@ func NewDatastoreTestSuite(createDS func() (datastore.DS, error), expectedKind s
 
 func (s *DatastoreTestSuite) SetupTest() {
 	ds, err := s.createDS()
-	s.Require().NoError(err)
+	require.NoError(s.T(), err)
 	s.ds = ds
 }
 
 func (s *DatastoreTestSuite) TestDatastoreKind() {
-	s.Require().Equal(s.expectedKind, s.ds.Kind())
+	require.Equal(s.T(), s.expectedKind, s.ds.Kind())
 }
 
 func (s *DatastoreTestSuite) TestOpenNonExisting() {
+	t := s.T()
+
 	for _, name := range testutils.EmptyBlobNamesOfAllTypes {
-		s.Run(fmt.Sprint(name.Type()), func() {
-			r, err := s.ds.Open(context.Background(), name)
-			s.Require().ErrorIs(err, datastore.ErrNotFound)
-			s.Require().Nil(r)
+		t.Run(fmt.Sprint(name.Type()), func(t *testing.T) {
+			r, err := s.ds.Open(t.Context(), name)
+			require.ErrorIs(t, err, datastore.ErrNotFound)
+			require.Nil(t, r)
 		})
 	}
 }
 
 func (s *DatastoreTestSuite) TestOpenInvalidBlobType() {
+	t := s.T()
+
 	bn, err := common.BlobNameFromHashAndType(sha256.New().Sum(nil), common.NewBlobType(0xFF))
-	s.Require().NoError(err)
+	require.NoError(t, err)
 
-	r, err := s.ds.Open(context.Background(), bn)
-	s.Require().ErrorIs(err, blobtypes.ErrUnknownBlobType)
-	s.Require().Nil(r)
+	r, err := s.ds.Open(t.Context(), bn)
+	require.ErrorIs(t, err, blobtypes.ErrUnknownBlobType)
+	require.Nil(t, r)
 
-	err = s.ds.Update(context.Background(), bn, bytes.NewBuffer(nil))
-	s.Require().ErrorIs(err, blobtypes.ErrUnknownBlobType)
+	err = s.ds.Update(t.Context(), bn, bytes.NewBuffer(nil))
+	require.ErrorIs(t, err, blobtypes.ErrUnknownBlobType)
 }
 
 func (s *DatastoreTestSuite) TestBlobValidationFailed() {
+	t := s.T()
+
 	for _, name := range testutils.EmptyBlobNamesOfAllTypes {
-		s.Run(fmt.Sprint(name.Type()), func() {
-			err := s.ds.Update(context.Background(), name, bytes.NewReader([]byte("test")))
-			s.Require().ErrorIs(err, blobtypes.ErrValidationFailed)
+		t.Run(fmt.Sprint(name.Type()), func(t *testing.T) {
+			err := s.ds.Update(t.Context(), name, bytes.NewReader([]byte("test")))
+			require.ErrorIs(t, err, blobtypes.ErrValidationFailed)
 		})
 	}
 }
 
 func (s *DatastoreTestSuite) TestSaveSuccessfulStatic() {
+	t := s.T()
+
 	for _, b := range testutils.TestBlobs {
-		exists, err := s.ds.Exists(context.Background(), b.Name)
-		s.Require().NoError(err)
-		s.Require().False(exists)
+		exists, err := s.ds.Exists(t.Context(), b.Name)
+		require.NoError(t, err)
+		require.False(t, exists)
 
-		err = s.ds.Update(context.Background(), b.Name, bytes.NewReader(b.Data))
-		s.Require().NoError(err)
+		err = s.ds.Update(t.Context(), b.Name, bytes.NewReader(b.Data))
+		require.NoError(t, err)
 
-		exists, err = s.ds.Exists(context.Background(), b.Name)
-		s.Require().NoError(err)
-		s.Require().True(exists)
+		exists, err = s.ds.Exists(t.Context(), b.Name)
+		require.NoError(t, err)
+		require.True(t, exists)
 
 		// Overwrite with the same data must be fine
-		err = s.ds.Update(context.Background(), b.Name, bytes.NewReader(b.Data))
-		s.Require().NoError(err)
+		err = s.ds.Update(t.Context(), b.Name, bytes.NewReader(b.Data))
+		require.NoError(t, err)
 
-		exists, err = s.ds.Exists(context.Background(), b.Name)
-		s.Require().NoError(err)
-		s.Require().True(exists)
+		exists, err = s.ds.Exists(t.Context(), b.Name)
+		require.NoError(t, err)
+		require.True(t, exists)
 
 		// Overwrite with wrong data must fail
-		err = s.ds.Update(context.Background(), b.Name, bytes.NewReader(append([]byte{0x00}, b.Data...)))
-		s.Require().ErrorIs(err, blobtypes.ErrValidationFailed)
+		err = s.ds.Update(t.Context(), b.Name, bytes.NewReader(append([]byte{0x00}, b.Data...)))
+		require.ErrorIs(t, err, blobtypes.ErrValidationFailed)
 
-		exists, err = s.ds.Exists(context.Background(), b.Name)
-		s.Require().NoError(err)
-		s.Require().True(exists)
+		exists, err = s.ds.Exists(t.Context(), b.Name)
+		require.NoError(t, err)
+		require.True(t, exists)
 
-		r, err := s.ds.Open(context.Background(), b.Name)
-		s.Require().NoError(err)
+		r, err := s.ds.Open(t.Context(), b.Name)
+		require.NoError(t, err)
 
 		data, err := io.ReadAll(r)
-		s.Require().NoError(err)
-		s.Require().Equal(b.Data, data)
+		require.NoError(t, err)
+		require.Equal(t, b.Data, data)
 
 		err = r.Close()
-		s.Require().NoError(err)
+		require.NoError(t, err)
 	}
 }
 
 func (s *DatastoreTestSuite) TestErrorWhileUpdating() {
+	t := s.T()
+
 	for i, b := range testutils.TestBlobs {
-		s.Run(fmt.Sprint(i), func() {
+		t.Run(fmt.Sprint(i), func(t *testing.T) {
 			errRet := errors.New("test error")
-			err := s.ds.Update(context.Background(), b.Name, testutils.BReader(b.Data, func() error {
+			err := s.ds.Update(t.Context(), b.Name, testutils.BReader(b.Data, func() error {
 				return errRet
 			}, nil))
-			s.Require().ErrorIs(err, errRet)
+			require.ErrorIs(t, err, errRet)
 
-			exists, err := s.ds.Exists(context.Background(), b.Name)
-			s.Require().NoError(err)
-			s.Require().False(exists)
+			exists, err := s.ds.Exists(t.Context(), b.Name)
+			require.NoError(t, err)
+			require.False(t, exists)
 		})
 	}
 }
 
 func (s *DatastoreTestSuite) TestErrorWhileOverwriting() {
+	t := s.T()
+
 	for i, b := range testutils.TestBlobs {
-		s.Run(fmt.Sprint(i), func() {
-			err := s.ds.Update(context.Background(), b.Name, bytes.NewReader(b.Data))
-			s.Require().NoError(err)
+		t.Run(fmt.Sprint(i), func(t *testing.T) {
+			err := s.ds.Update(t.Context(), b.Name, bytes.NewReader(b.Data))
+			require.NoError(t, err)
 
 			errRet := errors.New("cancel")
 
-			err = s.ds.Update(context.Background(), b.Name, testutils.BReader(b.Data, func() error {
-				exists, err := s.ds.Exists(context.Background(), b.Name)
-				s.Require().NoError(err)
-				s.Require().True(exists)
+			err = s.ds.Update(t.Context(), b.Name, testutils.BReader(b.Data, func() error {
+				exists, err := s.ds.Exists(t.Context(), b.Name)
+				require.NoError(t, err)
+				require.True(t, exists)
 
 				return errRet
 			}, nil))
 
-			s.Require().ErrorIs(err, errRet)
+			require.ErrorIs(t, err, errRet)
 
-			exists, err := s.ds.Exists(context.Background(), b.Name)
-			s.Require().NoError(err)
-			s.Require().True(exists)
+			exists, err := s.ds.Exists(t.Context(), b.Name)
+			require.NoError(t, err)
+			require.True(t, exists)
 
-			r, err := s.ds.Open(context.Background(), b.Name)
-			s.Require().NoError(err)
+			r, err := s.ds.Open(t.Context(), b.Name)
+			require.NoError(t, err)
 
 			data, err := io.ReadAll(r)
-			s.Require().NoError(err)
-			s.Require().Equal(b.Data, data)
+			require.NoError(t, err)
+			require.Equal(t, b.Data, data)
 
 			err = r.Close()
-			s.Require().NoError(err)
+			require.NoError(t, err)
 		})
 	}
 }
 
 func (s *DatastoreTestSuite) TestDeleteNonExisting() {
+	t := s.T()
+
 	b := testutils.TestBlobs[0]
 
-	err := s.ds.Update(context.Background(), b.Name, bytes.NewReader(b.Data))
-	s.Require().NoError(err)
+	err := s.ds.Update(t.Context(), b.Name, bytes.NewReader(b.Data))
+	require.NoError(t, err)
 
-	err = s.ds.Delete(context.Background(), testutils.TestBlobs[1].Name)
-	s.Require().ErrorIs(err, datastore.ErrNotFound)
+	err = s.ds.Delete(t.Context(), testutils.TestBlobs[1].Name)
+	require.ErrorIs(t, err, datastore.ErrNotFound)
 
-	exists, err := s.ds.Exists(context.Background(), b.Name)
-	s.Require().NoError(err)
-	s.Require().True(exists)
+	exists, err := s.ds.Exists(t.Context(), b.Name)
+	require.NoError(t, err)
+	require.True(t, exists)
 }
 
 func (s *DatastoreTestSuite) TestDeleteExisting() {
+	t := s.T()
+
 	b := testutils.TestBlobs[0]
-	err := s.ds.Update(context.Background(), b.Name, bytes.NewReader(b.Data))
-	s.Require().NoError(err)
+	err := s.ds.Update(t.Context(), b.Name, bytes.NewReader(b.Data))
+	require.NoError(t, err)
 
-	exists, err := s.ds.Exists(context.Background(), b.Name)
-	s.Require().NoError(err)
-	s.Require().True(exists)
+	exists, err := s.ds.Exists(t.Context(), b.Name)
+	require.NoError(t, err)
+	require.True(t, exists)
 
-	err = s.ds.Delete(context.Background(), b.Name)
-	s.Require().NoError(err)
+	err = s.ds.Delete(t.Context(), b.Name)
+	require.NoError(t, err)
 
-	exists, err = s.ds.Exists(context.Background(), b.Name)
-	s.Require().NoError(err)
-	s.Require().False(exists)
+	exists, err = s.ds.Exists(t.Context(), b.Name)
+	require.NoError(t, err)
+	require.False(t, exists)
 
-	r, err := s.ds.Open(context.Background(), b.Name)
-	s.Require().ErrorIs(err, datastore.ErrNotFound)
-	s.Require().Nil(r)
+	r, err := s.ds.Open(t.Context(), b.Name)
+	require.ErrorIs(t, err, datastore.ErrNotFound)
+	require.Nil(t, r)
 }
 
 func (s *DatastoreTestSuite) TestGetKind() {
+	t := s.T()
+
 	k := s.ds.Kind()
-	s.Require().NotEmpty(k)
+	require.NotEmpty(t, k)
 }
 
 func (s *DatastoreTestSuite) TestAddress() {
+	t := s.T()
+
 	address := s.ds.Address()
-	s.Require().Regexp(`^[a-zA-Z0-9_-]+://`, address)
+	require.Regexp(t, `^[a-zA-Z0-9_-]+://`, address)
 }
 
 func (s *DatastoreTestSuite) TestSimultaneousReads() {
+	t := s.T()
+
 	const threadCnt = 10
 	const readCnt = 200
 
 	// Prepare data
 	for _, b := range testutils.TestBlobs {
-		err := s.ds.Update(context.Background(), b.Name, bytes.NewReader(b.Data))
-		s.Require().NoError(err)
+		err := s.ds.Update(t.Context(), b.Name, bytes.NewReader(b.Data))
+		require.NoError(t, err)
 	}
 
 	wg := sync.WaitGroup{}
@@ -250,15 +273,15 @@ func (s *DatastoreTestSuite) TestSimultaneousReads() {
 			for n := 0; n < readCnt; n++ {
 				b := testutils.TestBlobs[(i+n)%len(testutils.TestBlobs)]
 
-				r, err := s.ds.Open(context.Background(), b.Name)
-				s.Require().NoError(err)
+				r, err := s.ds.Open(t.Context(), b.Name)
+				require.NoError(t, err)
 
 				data, err := io.ReadAll(r)
-				s.Require().NoError(err)
-				s.Require().Equal(b.Data, data)
+				require.NoError(t, err)
+				require.Equal(t, b.Data, data)
 
 				err = r.Close()
-				s.Require().NoError(err)
+				require.NoError(t, err)
 			}
 		}(i)
 	}
@@ -267,6 +290,8 @@ func (s *DatastoreTestSuite) TestSimultaneousReads() {
 }
 
 func (s *DatastoreTestSuite) TestSimultaneousUpdates() {
+	t := s.T()
+
 	const threadCnt = 3
 
 	b := testutils.TestBlobs[0]
@@ -274,85 +299,87 @@ func (s *DatastoreTestSuite) TestSimultaneousUpdates() {
 
 	for range threadCnt {
 		wg.Go(func() {
-			err := s.ds.Update(context.Background(), b.Name, bytes.NewReader(b.Data))
+			err := s.ds.Update(t.Context(), b.Name, bytes.NewReader(b.Data))
 			if errors.Is(err, datastore.ErrUploadInProgress) {
 				// TODO: We should be able to handle this case
 				return
 			}
 
-			s.Require().NoError(err)
+			require.NoError(t, err)
 
-			exists, err := s.ds.Exists(context.Background(), b.Name)
-			s.Require().NoError(err)
-			s.Require().True(exists)
+			exists, err := s.ds.Exists(t.Context(), b.Name)
+			require.NoError(t, err)
+			require.True(t, exists)
 		})
 	}
 
 	wg.Wait()
 
-	exists, err := s.ds.Exists(context.Background(), b.Name)
-	s.Require().NoError(err)
-	s.Require().True(exists)
+	exists, err := s.ds.Exists(t.Context(), b.Name)
+	require.NoError(t, err)
+	require.True(t, exists)
 
-	r, err := s.ds.Open(context.Background(), b.Name)
-	s.Require().NoError(err)
+	r, err := s.ds.Open(t.Context(), b.Name)
+	require.NoError(t, err)
 
 	data, err := io.ReadAll(r)
-	s.Require().NoError(err)
-	s.Require().Equal(b.Data, data)
+	require.NoError(t, err)
+	require.Equal(t, b.Data, data)
 
 	err = r.Close()
-	s.Require().NoError(err)
+	require.NoError(t, err)
 }
 
-func (s *DatastoreTestSuite) updateDynamicLink(num int) {
+func (s *DatastoreTestSuite) updateDynamicLink(t *testing.T, num int) {
 	err := s.ds.Update(
-		context.Background(),
+		t.Context(),
 		testutils.DynamicLinkPropagationData[num].Name,
 		bytes.NewReader(testutils.DynamicLinkPropagationData[num].Data),
 	)
-	s.Require().NoError(err)
+	require.NoError(t, err)
 }
 
-func (s *DatastoreTestSuite) readDynamicLinkData() []byte {
-	r, err := s.ds.Open(context.Background(), testutils.DynamicLinkPropagationData[0].Name)
-	s.Require().NoError(err)
+func (s *DatastoreTestSuite) readDynamicLinkData(t *testing.T) []byte {
+	r, err := s.ds.Open(t.Context(), testutils.DynamicLinkPropagationData[0].Name)
+	require.NoError(t, err)
 
 	dl, err := dynamiclink.FromPublicData(testutils.DynamicLinkPropagationData[0].Name, r)
-	s.Require().NoError(err)
+	require.NoError(t, err)
 
 	elink, err := io.ReadAll(dl.GetEncryptedLinkReader())
-	s.Require().NoError(err)
+	require.NoError(t, err)
 
 	err = r.Close()
-	s.Require().NoError(err)
+	require.NoError(t, err)
 
 	return elink
 }
 
-func (s *DatastoreTestSuite) expectDynamicLinkData(num int) {
-	s.Require().Equal(
+func (s *DatastoreTestSuite) expectDynamicLinkData(t *testing.T, num int) {
+	require.Equal(t,
 		testutils.DynamicLinkPropagationData[num].Expected,
-		s.readDynamicLinkData(),
+		s.readDynamicLinkData(t),
 	)
 }
 
 func (s *DatastoreTestSuite) TestDynamicLinkPropagation() {
-	s.updateDynamicLink(0)
-	s.expectDynamicLinkData(0)
+	t := s.T()
 
-	s.updateDynamicLink(1)
-	s.expectDynamicLinkData(1)
+	s.updateDynamicLink(t, 0)
+	s.expectDynamicLinkData(t, 0)
 
-	s.updateDynamicLink(0)
-	s.expectDynamicLinkData(1)
+	s.updateDynamicLink(t, 1)
+	s.expectDynamicLinkData(t, 1)
 
-	s.updateDynamicLink(2)
-	s.expectDynamicLinkData(2)
+	s.updateDynamicLink(t, 0)
+	s.expectDynamicLinkData(t, 1)
 
-	s.updateDynamicLink(1)
-	s.expectDynamicLinkData(2)
+	s.updateDynamicLink(t, 2)
+	s.expectDynamicLinkData(t, 2)
 
-	s.updateDynamicLink(0)
-	s.expectDynamicLinkData(2)
+	s.updateDynamicLink(t, 1)
+	s.expectDynamicLinkData(t, 2)
+
+	s.updateDynamicLink(t, 0)
+	s.expectDynamicLinkData(t, 2)
 }

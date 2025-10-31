@@ -22,8 +22,8 @@ import (
 	"testing"
 
 	"github.com/cinode/go-datastore/pkg/common"
+	"github.com/cinode/go-datastore/pkg/internal/picotestify/require"
 	"github.com/cinode/go-datastore/testvectors"
-	"github.com/stretchr/testify/require"
 )
 
 func TestVectors(t *testing.T) {

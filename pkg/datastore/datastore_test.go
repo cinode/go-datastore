@@ -26,7 +26,7 @@ import (
 	"github.com/cinode/go-datastore/pkg/blobtypes"
 	"github.com/cinode/go-datastore/pkg/common"
 	"github.com/cinode/go-datastore/pkg/datastore/testutils"
-	"github.com/stretchr/testify/require"
+	"github.com/cinode/go-datastore/pkg/internal/picotestify/require"
 )
 
 type mockStore struct {

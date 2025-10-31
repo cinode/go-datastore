@@ -24,8 +24,8 @@ import (
 	"testing"
 
 	"github.com/cinode/go-datastore/pkg/common"
+	"github.com/cinode/go-datastore/pkg/internal/picotestify/require"
 	"github.com/cinode/go-datastore/pkg/internal/utilities/errreader"
-	"github.com/stretchr/testify/require"
 )
 
 func TestCreate(t *testing.T) {
@@ -118,13 +118,13 @@ func TestPublisherUpdateLinkData(t *testing.T) {
 	require.NotNil(t, pr.r)
 	require.NotNil(t, pr.iv)
 	require.NotNil(t, pr.signature)
-	require.EqualValues(t, 0, pr.contentVersion)
+	require.Equal(t, uint64(0), pr.contentVersion)
 
 	t.Run("successful update", func(t *testing.T) {
 		pr2, key2, err := dl.UpdateLinkData(io.LimitReader(rand.Reader, 32), 1)
 		require.NoError(t, err)
 		require.Equal(t, key, key2)
-		require.EqualValues(t, 1, pr2.contentVersion)
+		require.Equal(t, uint64(1), pr2.contentVersion)
 	})
 
 	t.Run("failed data reader", func(t *testing.T) {

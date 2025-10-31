@@ -1,5 +1,5 @@
 /*
-Copyright © 2023 Bartłomiej Święcki (byo)
+Copyright © 2025 Bartłomiej Święcki (byo)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ package common
 import (
 	"testing"
 
-	"github.com/stretchr/testify/require"
+	"github.com/cinode/go-datastore/pkg/internal/picotestify/require"
 )
 
 func TestAuthInfo(t *testing.T) {

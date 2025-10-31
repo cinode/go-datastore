@@ -28,9 +28,9 @@ import (
 
 	"github.com/cinode/go-datastore/pkg/blobtypes"
 	"github.com/cinode/go-datastore/pkg/common"
+	"github.com/cinode/go-datastore/pkg/internal/picotestify/require"
 	"github.com/cinode/go-datastore/pkg/internal/utilities/cipherfactory"
 	"github.com/cinode/go-datastore/pkg/internal/utilities/errreader"
-	"github.com/stretchr/testify/require"
 )
 
 func TestFromPublicData(t *testing.T) {

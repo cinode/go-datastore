@@ -22,8 +22,8 @@ import (
 	"io"
 	"testing"
 
+	"github.com/cinode/go-datastore/pkg/internal/picotestify/require"
 	"github.com/cinode/go-datastore/pkg/internal/utilities/validatingreader"
-	"github.com/stretchr/testify/require"
 )
 
 func TestOnCloseCheckReader(t *testing.T) {

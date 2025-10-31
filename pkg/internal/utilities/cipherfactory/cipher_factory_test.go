@@ -22,7 +22,7 @@ import (
 	"testing"
 
 	"github.com/cinode/go-datastore/pkg/common"
-	"github.com/stretchr/testify/require"
+	"github.com/cinode/go-datastore/pkg/internal/picotestify/require"
 	"golang.org/x/crypto/chacha20"
 )
 

@@ -21,7 +21,7 @@ import (
 
 	"github.com/cinode/go-datastore/pkg/datastore"
 	"github.com/cinode/go-datastore/pkg/datastoreconformancetest"
-	"github.com/stretchr/testify/suite"
+	"github.com/cinode/go-datastore/pkg/internal/picotestify/suite"
 )
 
 func TestInMemoryDatastoreTestSuite(t *testing.T) {

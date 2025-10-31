@@ -26,8 +26,8 @@ import (
 	"github.com/cinode/go-datastore/pkg/common"
 	"github.com/cinode/go-datastore/pkg/datastore"
 	"github.com/cinode/go-datastore/pkg/datastore/testutils"
-	"github.com/stretchr/testify/require"
-	"github.com/stretchr/testify/suite"
+	"github.com/cinode/go-datastore/pkg/internal/picotestify/require"
+	"github.com/cinode/go-datastore/pkg/internal/picotestify/suite"
 )
 
 type StorageBackendTestSuite struct {
@@ -57,8 +57,10 @@ func NewStorageBackendTestSuite(
 }
 
 func (s *StorageBackendTestSuite) SetupTest() {
+	t := s.T()
+
 	st, err := s.CreateStorage()
-	s.Require().NoError(err)
+	require.NoError(t, err)
 	s.st = st
 }
 
