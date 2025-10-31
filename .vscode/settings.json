@@ -20,7 +20,6 @@
         "goveralls",
         "Hasher",
         "homefile",
-        "jbenet",
         "protobuf",
         "securefifo",
         "shogo",

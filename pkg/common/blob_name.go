@@ -20,7 +20,7 @@ import (
 	"crypto/subtle"
 	"errors"
 
-	base58 "github.com/jbenet/go-base58"
+	"github.com/cinode/go-datastore/pkg/internal/base58"
 )
 
 var (
@@ -59,7 +59,11 @@ func BlobNameFromHashAndType(hash []byte, t BlobType) (*BlobName, error) {
 
 // BlobNameFromString decodes base58-encoded string into blob name
 func BlobNameFromString(s string) (*BlobName, error) {
-	return BlobNameFromBytes(base58.Decode(s))
+	decoded, err := base58.Decode(s)
+	if err != nil {
+		return nil, ErrInvalidBlobName
+	}
+	return BlobNameFromBytes(decoded)
 }
 
 func BlobNameFromBytes(n []byte) (*BlobName, error) {

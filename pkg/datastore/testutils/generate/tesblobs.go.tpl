@@ -19,7 +19,7 @@ package testutils
 import (
 	"github.com/cinode/go-datastore/pkg/common"
 	"github.com/cinode/go-datastore/pkg/utilities/golang"
-	"github.com/jbenet/go-base58"
+	"github.com/cinode/go-datastore/pkg/internal/base58"
 )
 
 // nolint:lll // test data vectors
@@ -31,8 +31,8 @@ var TestBlobs = []struct {
 {{- range .TestBlobs }}
 	{
 		golang.Must(common.BlobNameFromString("{{ .Name }}")),
-		base58.Decode("{{ .Data }}"),
-		base58.Decode("{{ .Expected }}"),
+		golang.Must(base58.Decode("{{ .Data }}")),
+		golang.Must(base58.Decode("{{ .Expected }}")),
 	},
 {{- end }}
 }

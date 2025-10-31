@@ -28,9 +28,9 @@ import (
 
 	"github.com/cinode/go-datastore/pkg/blobtypes"
 	"github.com/cinode/go-datastore/pkg/common"
+	"github.com/cinode/go-datastore/pkg/internal/base58"
 	"github.com/cinode/go-datastore/pkg/internal/blobtypes/dynamiclink"
 	"github.com/cinode/go-datastore/pkg/utilities/golang"
-	"github.com/jbenet/go-base58"
 )
 
 func errPanic(err error) {
