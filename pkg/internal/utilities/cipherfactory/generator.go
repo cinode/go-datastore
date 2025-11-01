@@ -1,5 +1,5 @@
 /*
-Copyright © 2023 Bartłomiej Święcki (byo)
+Copyright © 2025 Bartłomiej Święcki (byo)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import (
 	"hash"
 	"io"
 
-	"github.com/cinode/go/pkg/common"
+	"github.com/cinode/go-common/blob"
 	"golang.org/x/crypto/chacha20"
 )
 
@@ -33,7 +33,7 @@ const (
 
 type KeyGenerator interface {
 	io.Writer
-	Generate() *common.BlobKey
+	Generate() *blob.Key
 }
 
 type keyGenerator struct {
@@ -42,8 +42,8 @@ type keyGenerator struct {
 
 func (g keyGenerator) Write(b []byte) (int, error) { return g.h.Write(b) }
 
-func (g keyGenerator) Generate() *common.BlobKey {
-	return common.BlobKeyFromBytes(append(
+func (g keyGenerator) Generate() *blob.Key {
+	return blob.KeyFromBytes(append(
 		[]byte{reservedByteForKeyType},
 		g.h.Sum(nil)[:chacha20.KeySize]...,
 	))
@@ -51,7 +51,7 @@ func (g keyGenerator) Generate() *common.BlobKey {
 
 type IVGenerator interface {
 	io.Writer
-	Generate() *common.BlobIV
+	Generate() *blob.IV
 }
 
 type ivGenerator struct {
@@ -60,28 +60,28 @@ type ivGenerator struct {
 
 func (g ivGenerator) Write(b []byte) (int, error) { return g.h.Write(b) }
 
-func (g ivGenerator) Generate() *common.BlobIV {
-	return common.BlobIVFromBytes(g.h.Sum(nil)[:chacha20.NonceSizeX])
+func (g ivGenerator) Generate() *blob.IV {
+	return blob.IVFromBytes(g.h.Sum(nil)[:chacha20.NonceSizeX])
 }
 
-func NewKeyGenerator(t common.BlobType) KeyGenerator {
+func NewKeyGenerator(t blob.Type) KeyGenerator {
 	h := sha256.New()
 	h.Write([]byte{preambleHashKey, reservedByteForKeyType, t.IDByte()})
 	return keyGenerator{h: h}
 }
 
-func NewIVGenerator(t common.BlobType) IVGenerator {
+func NewIVGenerator(t blob.Type) IVGenerator {
 	h := sha256.New()
 	h.Write([]byte{preambleHashIV, reservedByteForKeyType, t.IDByte()})
 	return ivGenerator{h: h}
 }
 
-var defaultXChaCha20IV = func() *common.BlobIV {
+var defaultXChaCha20IV = func() *blob.IV {
 	h := sha256.New()
 	h.Write([]byte{preambleHashDefaultIV, reservedByteForKeyType})
-	return common.BlobIVFromBytes(h.Sum(nil)[:chacha20.NonceSizeX])
+	return blob.IVFromBytes(h.Sum(nil)[:chacha20.NonceSizeX])
 }()
 
-func DefaultIV(k *common.BlobKey) *common.BlobIV {
+func DefaultIV(k *blob.Key) *blob.IV {
 	return defaultXChaCha20IV
 }

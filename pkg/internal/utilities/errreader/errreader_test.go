@@ -14,15 +14,20 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package testutils
+package errreader
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/cinode/go-common/picotestify/require"
 )
 
-func TestTestBlobs(t *testing.T) {
-	require.NotEmpty(t, TestBlobs)
-	require.NotEmpty(t, DynamicLinkPropagationData)
+func TestErrReader(t *testing.T) {
+	expectedErr := errors.New("test error")
+	r := New(expectedErr)
+
+	n, err := r.Read(make([]byte, 10))
+	require.Zero(t, n)
+	require.ErrorIs(t, err, expectedErr)
 }

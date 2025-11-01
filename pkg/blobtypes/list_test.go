@@ -1,5 +1,5 @@
 /*
-Copyright © 2023 Bartłomiej Święcki (byo)
+Copyright © 2025 Bartłomiej Święcki (byo)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@ package blobtypes
 import (
 	"testing"
 
-	"github.com/cinode/go/pkg/common"
-	"github.com/stretchr/testify/require"
+	"github.com/cinode/go-common/blob"
+	"github.com/cinode/go-common/picotestify/require"
 )
 
 func TestToName(t *testing.T) {
@@ -31,6 +31,6 @@ func TestToName(t *testing.T) {
 	})
 	t.Run("invalid type", func(t *testing.T) {
 		require.Equal(t, "Invalid(0)", ToName(Invalid))
-		require.Equal(t, "Invalid(255)", ToName(common.NewBlobType(255)))
+		require.Equal(t, "Invalid(255)", ToName(blob.NewType(255)))
 	})
 }

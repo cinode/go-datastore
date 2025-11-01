@@ -21,40 +21,39 @@ import (
 	"context"
 	"errors"
 	"io"
-	"io/fs"
 	"testing"
 
-	"github.com/cinode/go/pkg/blobtypes"
-	"github.com/cinode/go/pkg/common"
-	"github.com/cinode/go/pkg/datastore/testutils"
-	"github.com/stretchr/testify/require"
+	"github.com/cinode/go-common/blob"
+	"github.com/cinode/go-common/picotestify/require"
+	"github.com/cinode/go-datastore/pkg/blobtypes"
+	"github.com/cinode/go-datastore/pkg/datastore/testutils"
 )
 
 type mockStore struct {
 	fKind            func() string
 	fAddress         func() string
-	fOpenReadStream  func(ctx context.Context, name *common.BlobName) (io.ReadCloser, error)
-	fOpenWriteStream func(ctx context.Context, name *common.BlobName) (WriteCloseCanceller, error)
-	fExists          func(ctx context.Context, name *common.BlobName) (bool, error)
-	fDelete          func(ctx context.Context, name *common.BlobName) error
+	fOpenReadStream  func(ctx context.Context, name *blob.Name) (io.ReadCloser, error)
+	fOpenWriteStream func(ctx context.Context, name *blob.Name) (WriteCloseCanceller, error)
+	fExists          func(ctx context.Context, name *blob.Name) (bool, error)
+	fDelete          func(ctx context.Context, name *blob.Name) error
 }
 
-func (s *mockStore) kind() string {
+func (s *mockStore) Kind() string {
 	return s.fKind()
 }
-func (s *mockStore) address() string {
+func (s *mockStore) Address() string {
 	return s.fAddress()
 }
-func (s *mockStore) openReadStream(ctx context.Context, name *common.BlobName) (io.ReadCloser, error) {
+func (s *mockStore) OpenReadStream(ctx context.Context, name *blob.Name) (io.ReadCloser, error) {
 	return s.fOpenReadStream(ctx, name)
 }
-func (s *mockStore) openWriteStream(ctx context.Context, name *common.BlobName) (WriteCloseCanceller, error) {
+func (s *mockStore) OpenWriteStream(ctx context.Context, name *blob.Name) (WriteCloseCanceller, error) {
 	return s.fOpenWriteStream(ctx, name)
 }
-func (s *mockStore) exists(ctx context.Context, name *common.BlobName) (bool, error) {
+func (s *mockStore) Exists(ctx context.Context, name *blob.Name) (bool, error) {
 	return s.fExists(ctx, name)
 }
-func (s *mockStore) delete(ctx context.Context, name *common.BlobName) error {
+func (s *mockStore) Delete(ctx context.Context, name *blob.Name) error {
 	return s.fDelete(ctx, name)
 }
 
@@ -78,7 +77,7 @@ func TestDatastoreWriteFailure(t *testing.T) {
 	t.Run("error on opening write stream", func(t *testing.T) {
 		errRet := errors.New("error")
 		ds := &datastore{s: &mockStore{
-			fOpenWriteStream: func(ctx context.Context, name *common.BlobName) (WriteCloseCanceller, error) {
+			fOpenWriteStream: func(ctx context.Context, name *blob.Name) (WriteCloseCanceller, error) {
 				return nil, errRet
 			},
 		}}
@@ -93,7 +92,7 @@ func TestDatastoreWriteFailure(t *testing.T) {
 		closeCalled := false
 		cancelCalled := false
 		ds := &datastore{s: &mockStore{
-			fOpenWriteStream: func(ctx context.Context, name *common.BlobName) (WriteCloseCanceller, error) {
+			fOpenWriteStream: func(ctx context.Context, name *blob.Name) (WriteCloseCanceller, error) {
 				return &mockWriteCloseCanceller{
 					fWrite: func(b []byte) (int, error) {
 						require.False(t, closeCalled)
@@ -112,7 +111,7 @@ func TestDatastoreWriteFailure(t *testing.T) {
 					},
 				}, nil
 			},
-			fOpenReadStream: func(ctx context.Context, name *common.BlobName) (io.ReadCloser, error) {
+			fOpenReadStream: func(ctx context.Context, name *blob.Name) (io.ReadCloser, error) {
 				return nil, ErrNotFound
 			},
 		}}
@@ -139,16 +138,4 @@ func TestDatastoreDetectCorruptedRead(t *testing.T) {
 
 	err = r.Close()
 	require.NoError(t, err)
-}
-
-func TestInvalidInFileSystemParameters(t *testing.T) {
-	ds, err := InFileSystem("/some:invalid;path?*")
-	require.IsType(t, &fs.PathError{}, err)
-	require.Nil(t, ds)
-}
-
-func TestInvalidInRawFileSystemParameters(t *testing.T) {
-	ds, err := InRawFileSystem("/some:invalid;path?*")
-	require.IsType(t, &fs.PathError{}, err)
-	require.Nil(t, ds)
 }

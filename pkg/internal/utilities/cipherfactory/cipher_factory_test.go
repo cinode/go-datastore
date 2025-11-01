@@ -21,8 +21,8 @@ import (
 	"io"
 	"testing"
 
-	"github.com/cinode/go/pkg/common"
-	"github.com/stretchr/testify/require"
+	"github.com/cinode/go-common/blob"
+	"github.com/cinode/go-common/picotestify/require"
 	"golang.org/x/crypto/chacha20"
 )
 
@@ -60,8 +60,8 @@ func TestCipherForKeyIV(t *testing.T) {
 	} {
 		t.Run(d.desc, func(t *testing.T) {
 			sr, err := StreamCipherReader(
-				common.BlobKeyFromBytes(d.key),
-				common.BlobIVFromBytes(d.iv),
+				blob.KeyFromBytes(d.key),
+				blob.IVFromBytes(d.iv),
 				bytes.NewReader([]byte{}),
 			)
 			require.ErrorIs(t, err, d.err)
@@ -70,8 +70,8 @@ func TestCipherForKeyIV(t *testing.T) {
 			}
 
 			sw, err := StreamCipherWriter(
-				common.BlobKeyFromBytes(d.key),
-				common.BlobIVFromBytes(d.iv),
+				blob.KeyFromBytes(d.key),
+				blob.IVFromBytes(d.iv),
 				bytes.NewBuffer(nil),
 			)
 			require.ErrorIs(t, err, d.err)
@@ -83,8 +83,8 @@ func TestCipherForKeyIV(t *testing.T) {
 }
 
 func TestStreamCipherRoundtrip(t *testing.T) {
-	key := common.BlobKeyFromBytes(make([]byte, chacha20.KeySize+1))
-	iv := common.BlobIVFromBytes(make([]byte, chacha20.NonceSizeX))
+	key := blob.KeyFromBytes(make([]byte, chacha20.KeySize+1))
+	iv := blob.IVFromBytes(make([]byte, chacha20.NonceSizeX))
 
 	data := []byte{0x01, 0x02, 0x03, 0x04, 0x05, 0x06}
 	buf := bytes.NewBuffer(nil)

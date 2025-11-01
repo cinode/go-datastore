@@ -1,0 +1,88 @@
+name: Pull Request checks
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    name: Verify linting
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-go@v6
+        with:
+          go-version: stable
+      - name: Run go vet
+        run: go vet ./...
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v8
+        with:
+          version: v2.5
+
+  mod-tidy:
+    name: Check if go mod tidy is needed
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-go@v6
+        with:
+          go-version: stable
+      - run: |
+          go mod tidy
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "go mod tidy failed"
+            git diff
+            exit 1
+          fi
+
+  go-generate:
+    name: Check if generated files are up to date
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-go@v6
+        with:
+          go-version: stable
+      - run: |
+          go generate ./...
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "Generated files are out of date. Please run 'go generate ./...' and commit the changes."
+            git diff
+            exit 1
+          fi
+
+  test:
+    name: Run Go Tests
+    strategy:
+      matrix:
+        env:
+          - os: ubuntu-latest
+            coverage: true
+          - os: macos-latest
+          - os: windows-latest
+            continue-on-error: true
+    runs-on: ${{ matrix.env.os }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-go@v6
+        with:
+          go-version: stable
+      - run: |
+          go test -v \
+            ${{ matrix.env.coverage && '-coverprofile=profile.cov -coverpkg=./...' }} \
+            ./...
+        continue-on-error: ${{ matrix.env['continue-on-error'] }}
+      - uses: shogo82148/actions-goveralls@v1
+        if: ${{ matrix.env.coverage }}
+        with:
+          path-to-profile: profile.cov
+      - uses: codecov/codecov-action@v5
+        if: ${{ matrix.env.coverage }}
+        with:
+          files: profile.cov

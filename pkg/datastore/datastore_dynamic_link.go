@@ -1,5 +1,5 @@
 /*
-Copyright © 2023 Bartłomiej Święcki (byo)
+Copyright © 2025 Bartłomiej Święcki (byo)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -21,12 +21,12 @@ import (
 	"errors"
 	"io"
 
-	"github.com/cinode/go/pkg/common"
-	"github.com/cinode/go/pkg/internal/blobtypes/dynamiclink"
+	"github.com/cinode/go-common/blob"
+	"github.com/cinode/go-datastore/pkg/internal/blobtypes/dynamiclink"
 )
 
-func (ds *datastore) openDynamicLink(ctx context.Context, name *common.BlobName) (io.ReadCloser, error) {
-	rc, err := ds.s.openReadStream(ctx, name)
+func (ds *datastore) openDynamicLink(ctx context.Context, name *blob.Name) (io.ReadCloser, error) {
+	rc, err := ds.s.OpenReadStream(ctx, name)
 	if err != nil {
 		return nil, err
 	}
@@ -50,12 +50,12 @@ func (ds *datastore) openDynamicLink(ctx context.Context, name *common.BlobName)
 // read from - only for comparison
 func (ds *datastore) newLinkGreaterThanCurrent(
 	ctx context.Context,
-	name *common.BlobName,
+	name *blob.Name,
 	newLink *dynamiclink.PublicReader,
 ) (
 	bool, error,
 ) {
-	rc, err := ds.s.openReadStream(ctx, name)
+	rc, err := ds.s.OpenReadStream(ctx, name)
 	if errors.Is(err, ErrNotFound) {
 		return true, nil
 	}
@@ -72,8 +72,8 @@ func (ds *datastore) newLinkGreaterThanCurrent(
 	return newLink.GreaterThan(dl), nil
 }
 
-func (ds *datastore) updateDynamicLink(ctx context.Context, name *common.BlobName, updateStream io.Reader) error {
-	ws, err := ds.s.openWriteStream(ctx, name)
+func (ds *datastore) updateDynamicLink(ctx context.Context, name *blob.Name, updateStream io.Reader) error {
+	ws, err := ds.s.OpenWriteStream(ctx, name)
 	if err != nil {
 		return err
 	}

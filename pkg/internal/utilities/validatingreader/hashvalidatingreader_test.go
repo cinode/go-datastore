@@ -23,8 +23,8 @@ import (
 	"io"
 	"testing"
 
-	"github.com/cinode/go/pkg/internal/utilities/validatingreader"
-	"github.com/stretchr/testify/require"
+	"github.com/cinode/go-common/picotestify/require"
+	"github.com/cinode/go-datastore/pkg/internal/utilities/validatingreader"
 )
 
 func TestHashValidatingReader(t *testing.T) {
@@ -46,7 +46,7 @@ func TestHashValidatingReader(t *testing.T) {
 
 			readBack, err := io.ReadAll(r)
 			require.NoError(t, err)
-			require.EqualValues(t, data, readBack)
+			require.Equal(t, data, readBack)
 		})
 
 		t.Run("invalid hash", func(t *testing.T) {
@@ -64,7 +64,7 @@ func TestHashValidatingReader(t *testing.T) {
 
 			readBack, err := io.ReadAll(r)
 			require.ErrorIs(t, err, retErr)
-			require.EqualValues(t, data, readBack)
+			require.Equal(t, data, readBack)
 		})
 	}
 }

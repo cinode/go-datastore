@@ -23,12 +23,12 @@ import (
 	"fmt"
 	"hash"
 	"io"
-	"testing/iotest"
 
-	"github.com/cinode/go/pkg/blobtypes"
-	"github.com/cinode/go/pkg/common"
-	"github.com/cinode/go/pkg/internal/utilities/cipherfactory"
-	"github.com/cinode/go/pkg/internal/utilities/validatingreader"
+	"github.com/cinode/go-common/blob"
+	"github.com/cinode/go-datastore/pkg/blobtypes"
+	"github.com/cinode/go-datastore/pkg/internal/utilities/cipherfactory"
+	"github.com/cinode/go-datastore/pkg/internal/utilities/errreader"
+	"github.com/cinode/go-datastore/pkg/internal/utilities/validatingreader"
 )
 
 var (
@@ -94,14 +94,14 @@ type Public struct {
 	nonce     uint64
 }
 
-func (d *Public) BlobName() *common.BlobName {
+func (d *Public) BlobName() *blob.Name {
 	hasher := sha256.New()
 
 	storeByte(hasher, reservedByteValue)
 	storeBuff(hasher, d.publicKey)
 	storeUint64(hasher, d.nonce)
 
-	bn, _ := common.BlobNameFromHashAndType(hasher.Sum(nil), blobtypes.DynamicLink)
+	bn, _ := blob.NameFromHashAndType(hasher.Sum(nil), blobtypes.DynamicLink)
 	return bn
 }
 
@@ -111,7 +111,7 @@ func (d *Public) BlobName() *common.BlobName {
 // the data on-the-fly from another reader).
 type PublicReader struct {
 	r         io.Reader
-	iv        *common.BlobIV
+	iv        *blob.IV
 	signature []byte
 	Public
 	contentVersion uint64
@@ -121,7 +121,7 @@ type PublicReader struct {
 //
 // Invalid links are rejected - i.e. if there's any error while reading the data
 // or when the validation of the link fails for whatever reason
-func FromPublicData(name *common.BlobName, r io.Reader) (*PublicReader, error) {
+func FromPublicData(name *blob.Name, r io.Reader) (*PublicReader, error) {
 	dl := PublicReader{
 		Public: Public{
 			publicKey: make([]byte, ed25519.PublicKeySize),
@@ -177,7 +177,7 @@ func FromPublicData(name *common.BlobName, r io.Reader) (*PublicReader, error) {
 	if err != nil {
 		return nil, err
 	}
-	dl.iv = common.BlobIVFromBytes(iv)
+	dl.iv = blob.IVFromBytes(iv)
 
 	// Starting from validations at this point, errors are returned while reading.
 	// This is to prepare for future improvements when real streaming is
@@ -204,7 +204,7 @@ func FromPublicData(name *common.BlobName, r io.Reader) (*PublicReader, error) {
 	}()
 
 	if err != nil {
-		dl.r = iotest.ErrReader(err)
+		dl.r = errreader.New(err)
 	} else {
 		dl.r = bytes.NewReader(elink)
 	}
@@ -275,7 +275,7 @@ func (d *PublicReader) ivGeneratorPrefilled() cipherfactory.IVGenerator {
 	return ivGenerator
 }
 
-func (d *PublicReader) validateKeyInLinkData(key *common.BlobKey, r io.Reader) error {
+func (d *PublicReader) validateKeyInLinkData(key *blob.Key, r io.Reader) error {
 	// At the beginning of the data there's the key validation block,
 	// that block contains a proof that the encryption key was deterministically derived
 	// from the blob name (thus preventing weak key attack)
@@ -307,7 +307,7 @@ func (d *PublicReader) validateKeyInLinkData(key *common.BlobKey, r io.Reader) e
 	return nil
 }
 
-func (d *PublicReader) GetLinkDataReader(key *common.BlobKey) (io.Reader, error) {
+func (d *PublicReader) GetLinkDataReader(key *blob.Key) (io.Reader, error) {
 	r, err := cipherfactory.StreamCipherReader(key, d.iv, d.GetEncryptedLinkReader())
 	if err != nil {
 		return nil, err

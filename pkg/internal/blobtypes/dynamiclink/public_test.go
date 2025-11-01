@@ -25,19 +25,19 @@ import (
 	math_rand "math/rand"
 	"sort"
 	"testing"
-	"testing/iotest"
 
-	"github.com/cinode/go/pkg/blobtypes"
-	"github.com/cinode/go/pkg/common"
-	"github.com/cinode/go/pkg/internal/utilities/cipherfactory"
-	"github.com/stretchr/testify/require"
+	"github.com/cinode/go-common/blob"
+	"github.com/cinode/go-common/picotestify/require"
+	"github.com/cinode/go-datastore/pkg/blobtypes"
+	"github.com/cinode/go-datastore/pkg/internal/utilities/cipherfactory"
+	"github.com/cinode/go-datastore/pkg/internal/utilities/errreader"
 )
 
 func TestFromPublicData(t *testing.T) {
 	t.Run("Ensure we don't crash on truncated data", func(t *testing.T) {
 		for i := 0; i < 1000; i++ {
 			data := make([]byte, i)
-			dl, err := FromPublicData(&common.BlobName{}, bytes.NewReader(data))
+			dl, err := FromPublicData(&blob.Name{}, bytes.NewReader(data))
 			require.ErrorIs(t, err, ErrInvalidDynamicLinkData)
 			require.Nil(t, dl)
 		}
@@ -45,7 +45,7 @@ func TestFromPublicData(t *testing.T) {
 
 	t.Run("Do not accept the link if reserved byte is not zero", func(t *testing.T) {
 		data := []byte{0xFF, 0, 0, 0}
-		dl, err := FromPublicData(&common.BlobName{}, bytes.NewReader(data))
+		dl, err := FromPublicData(&blob.Name{}, bytes.NewReader(data))
 		require.ErrorIs(t, err, ErrInvalidDynamicLinkData)
 		require.ErrorIs(t, err, ErrInvalidDynamicLinkDataReservedByte)
 		require.Nil(t, dl)
@@ -71,7 +71,7 @@ func TestFromPublicData(t *testing.T) {
 			t.Run(fmt.Sprint(validBytes), func(t *testing.T) {
 				rdr := io.MultiReader(
 					bytes.NewReader(data[:validBytes]),
-					iotest.ErrReader(injectedErr),
+					errreader.New(injectedErr),
 				)
 
 				dl, err := FromPublicData(dl.BlobName(), rdr)
@@ -86,6 +86,25 @@ func TestFromPublicData(t *testing.T) {
 				}
 			})
 		}
+	})
+
+	t.Run("can't read data from reader twice", func(t *testing.T) {
+		dl, err := Create(rand.Reader)
+		require.NoError(t, err)
+
+		pr, key, err := dl.UpdateLinkData(bytes.NewReader(nil), 0)
+		require.NoError(t, err)
+		require.NotEmpty(t, key)
+
+		r := pr.GetPublicDataReader()
+		require.NotNil(t, r)
+
+		_, err = io.ReadAll(r)
+		require.NoError(t, err)
+
+		require.Panics(t, func() {
+			_ = pr.GetPublicDataReader()
+		})
 	})
 
 	t.Run("valid link serialization and deserialization", func(t *testing.T) {
@@ -305,7 +324,7 @@ func TestPublicReaderGetLinkDataReader(t *testing.T) {
 		// Flip a single bit in IV
 		ivBytes := pr.iv.Bytes()
 		ivBytes[len(ivBytes)/2] ^= 0x80
-		pr.iv = common.BlobIVFromBytes(ivBytes)
+		pr.iv = blob.IVFromBytes(ivBytes)
 
 		// Because the IV is incorrect, key validation block that is encrypted will be invalid
 		// thus the method will complain about key, not the IV that will fail first
@@ -320,7 +339,7 @@ func TestPublicReaderGetLinkDataReader(t *testing.T) {
 		pr, _, err := link.UpdateLinkData(bytes.NewReader([]byte("Hello world")), 0)
 		require.NoError(t, err)
 
-		_, err = pr.GetLinkDataReader(&common.BlobKey{})
+		_, err = pr.GetLinkDataReader(&blob.Key{})
 		require.ErrorIs(t, err, cipherfactory.ErrInvalidEncryptionConfigKeyType)
 	})
 }

@@ -21,7 +21,7 @@ import (
 	"io"
 	"testing"
 
-	"github.com/stretchr/testify/require"
+	"github.com/cinode/go-common/picotestify/require"
 )
 
 func TestBReaderOnRead(t *testing.T) {

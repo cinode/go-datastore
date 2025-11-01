@@ -17,68 +17,69 @@ limitations under the License.
 package testutils
 
 import (
-	"github.com/cinode/go/pkg/common"
-	"github.com/cinode/go/pkg/utilities/golang"
-	"github.com/jbenet/go-base58"
+	"encoding/hex"
+
+	"github.com/cinode/go-common/blob"
+	"github.com/cinode/go-common/cutl"
 )
 
 // nolint:lll // test data vectors
 var TestBlobs = []struct {
-	Name     *common.BlobName
+	Name     *blob.Name
 	Data     []byte
 	Expected []byte
 }{
 	{
-		golang.Must(common.BlobNameFromString("KDc2ijtWc9mGxb5hP29YSBgkMLH8wCWnVimpvP3M6jdAk")),
-		base58.Decode("3A836b"),
-		base58.Decode("3A836b"),
+		cutl.Must(blob.NameFromString("KDc2ijtWc9mGxb5hP29YSBgkMLH8wCWnVimpvP3M6jdAk")),
+		cutl.Must(hex.DecodeString("54657374")),
+		cutl.Must(hex.DecodeString("54657374")),
 	},
 	{
-		golang.Must(common.BlobNameFromString("BG8WaXMAckEfbCuoiHpx2oMAS4zAaPqAqrgf5Q3YNzmHx")),
-		base58.Decode("AXG4Ffv"),
-		base58.Decode("AXG4Ffv"),
+		cutl.Must(blob.NameFromString("BG8WaXMAckEfbCuoiHpx2oMAS4zAaPqAqrgf5Q3YNzmHx")),
+		cutl.Must(hex.DecodeString("5465737431")),
+		cutl.Must(hex.DecodeString("5465737431")),
 	},
 	{
-		golang.Must(common.BlobNameFromString("2GLoj4Bk7SvjQngCT85gxWRu2DXCCjs9XWKsSpM85Wq3Ve")),
-		base58.Decode(""),
-		base58.Decode(""),
+		cutl.Must(blob.NameFromString("2GLoj4Bk7SvjQngCT85gxWRu2DXCCjs9XWKsSpM85Wq3Ve")),
+		cutl.Must(hex.DecodeString("")),
+		cutl.Must(hex.DecodeString("")),
 	},
 	{
-		golang.Must(common.BlobNameFromString("251SEdnHjwyvUqX1EZnuKruta4yHMkTDed7LGoi3nUJwhx")),
-		base58.Decode("1DhLfjA9ij9QFBh7J8ysnN3uvGcsNQa7vaxKEwbYEMSEXuZbgyCtUAn5FhadZHuh7wergdpyrfuDX2TpddoWtu14HkVkFQsuHzNuPg3LAuyhQwiuKDxLtmjWkDExx651o7Gun8VYkbDVPvabYSa2Kgbei59YyUKhRztrfySngpUr17HDn38e6RT9hmmkfL8jL8FiTsqrkFgxCYKQXaBkHQBswy7rWUgP8kT65wJdAgXykW2WwyyNMKtYUiX2iLGGNDfbt4EFiJAQbPZJBtEdwnhP66hM"),
-		base58.Decode("9VBV1V9DJ2uqDd99zZaCsuQp6v95vwsfuty2wGQKDPZTg4cmbRqZUgZzJkgEJWk6ps2z87M5zRQ4FisjcskpSZoSxZL4Zjpb"),
+		cutl.Must(blob.NameFromString("251SEdnHjwyvUqX1EZnuKruta4yHMkTDed7LGoi3nUJwhx")),
+		cutl.Must(hex.DecodeString("00c44bbf343e578f995dc0e8b4d1119c64973003a2ad68a3b6d1ce6ed9a0a79f7b7daace91b391cace11617f9af0bbb83c9d8a18d930d099444f0f78c1c706511339c272a05403e635ca1d237c936878cfcb3c2456498bf2ca4e12e4246f8403f6b8c462dabfeadc0e0000000000000000189afcc9e1dba6ee8e3926cf2b22da225a5a59806eee5cc737c11b6f9a4f19082414b54cfba2f3498045e1a0c232e532a20ba81f98122839d6867de9b929251cf43d5c7c7be78ac0cbebf507c2c601422a2a6c33b1a2ba1525130673d0c040")),
+		cutl.Must(hex.DecodeString("c11b6f9a4f19082414b54cfba2f3498045e1a0c232e532a20ba81f98122839d6867de9b929251cf43d5c7c7be78ac0cbebf507c2c601422a2a6c33b1a2ba1525130673d0c040")),
 	},
 	{
-		golang.Must(common.BlobNameFromString("27vP1JG4VJNZvQJ4Zfhy3H5xKugurbh89B7rKTcStM9guB")),
-		base58.Decode("1eE2wp1836WtQmEbjdavggJvFPU7dZbQQH5EBS2LwBL2rYjArM9mjvWFEGSfXrQCHscqdGy68exskkPXpGko2HezEAoz4UyQevHphVR5QP1JdLYYmAb4yA63bSznXz6osc8EyxvcKtLGoyfss7omAwrtGLeq1NNiYniXBiJJtuJxtKanw4GAPzn8mpoqhmZQFd36VV5MtLNFpTz5S8ke7MZSkCRKYLJutBxev9fZ5xvt2gqYWEQizWgV691juLC4FA5H82cBq2ZKwUwF4ad1JVcu822AA"),
-		base58.Decode("PKfeHiNXhYXvq4nu6QKyVTgAXwiLBBJWg6LgZvpgMY82TU5WBBFMdTZQs18kD4iVpkGzH4fjupcRFZJVwJ6rouakMJF6mtvk6"),
+		cutl.Must(blob.NameFromString("27vP1JG4VJNZvQJ4Zfhy3H5xKugurbh89B7rKTcStM9guB")),
+		cutl.Must(hex.DecodeString("008266a49daf44cd25f425ad31ffe88a21d160e9da947b51e733271f8ac71652f876882dc5dbc0dd3eead04bd6d49e826a7ed04a039e825b5353d52054209c18d19803cb68c63acc89e11a284b82a7515ef3b6eb64035d1b9052ea198c1874860afa1d98052f4f1304000000000000000118c001789a1e57030e92a620b6f89abf005bb1f7e389ddaa4a7315d299c9af674bfbdf81ba59fb8d99ad5d5e07779153e90bafaf6b2b755c1de90c0f6118bbc49096e090b5b4a6d17cccabfd10ea957b81552a63da648c5cc27d9ac4fecf630f")),
+		cutl.Must(hex.DecodeString("7315d299c9af674bfbdf81ba59fb8d99ad5d5e07779153e90bafaf6b2b755c1de90c0f6118bbc49096e090b5b4a6d17cccabfd10ea957b81552a63da648c5cc27d9ac4fecf630f")),
 	},
 	{
-		golang.Must(common.BlobNameFromString("e3T1HcdDLc73NHed2SFu5XHUQx5KDwgdAYTMmmEk2Ekqm")),
-		base58.Decode("1yULPpEx3gjpKNBLCEzb2oj2xRcdGfr88CztgfYfEipBGiJCijqWBEEmVAQJ4F33AoJyYkq9Rmj6n9ChngFR7TP8jHjddQM2sKqyDi1NUAmWi7TdGCh79FXTGR12r1RNoNPfqUVv1YZjyNsCgw5cN9WetWgoj5jbdxrqkyq3UjnqM1gEfazdKCyfvWurWr3aWRy4GxQuAQDxfccpSkBxVfzchb4CyRftPt28Lc85g4qGA3oHiLDrwh1qX29gFuZqse8Nq3rLsTUT5vNiLbd1Kr"),
-		base58.Decode("ULEdmCvFAc593MMZ1Yyd6etYP6ofZE8jE41hLWp7mUUs2DyfP3y9BguoyNLK5KumSLqy6vWDGG81CnMkqa8iaiL1jz"),
+		cutl.Must(blob.NameFromString("e3T1HcdDLc73NHed2SFu5XHUQx5KDwgdAYTMmmEk2Ekqm")),
+		cutl.Must(hex.DecodeString("00628297af66c4e51f1f8d7c491e240ced24cb9172e0056ec3f008d781ecefe177d7b068640f5feec1bafa2974c8b3a793bdcc25b6a7032199b6bd690cb47ff576ec37b36f3fdf9787afbc056fbd42e04e3bad2950aabf80d7f5f8e5438ed6b256c4c5be65f8ba5c0d0000000000000002188ccb210ee53218f74d24c14a9417394a767d74529d6a3618462bd895adfbd18dbc2b95074edd121e734edbde1c9c8e10aea5f7cbfedc792030c43539b6b96c7fee06f003db9e62fcb76ed659983ca73d3fca600c9dafc9e282a5")),
+		cutl.Must(hex.DecodeString("462bd895adfbd18dbc2b95074edd121e734edbde1c9c8e10aea5f7cbfedc792030c43539b6b96c7fee06f003db9e62fcb76ed659983ca73d3fca600c9dafc9e282a5")),
 	},
 }
 
 // nolint:lll // test data vectors
 var DynamicLinkPropagationData = []struct {
-	Name     *common.BlobName
+	Name     *blob.Name
 	Data     []byte
 	Expected []byte
 }{
 	{
-		golang.Must(common.BlobNameFromString("GUnL66Lyv2Qs4baxPhy59kF4dsB9HWakvTjMBjNGFLT6g")),
-		base58.Decode("17Jk3QJMCABypJWuAivYwMi43gN1KxPVy3qg1e4HYQFe8BCQPVm6GX8cQX3eKBQ2zdmzs9wRqESbGzCELdM9Kn7RoNmJiA7LY7hg66iPrWGfikzhJtRfFqS7eXs4ohLqbcaNXQt3i36JSxkeriTJBCEuzi86uAUqL9oJm5uqQJ7QBehXPDX7pjFZGi3QKA1JfPwsJUsZEwwfJPX2jhsZHDCgnpdRJoVaGQ6zj3u9PVoTCNqiy5m534o6Dejer4yJQWxvxeNJcRgyoCGRek1ByQGyChziW"),
-		base58.Decode("PiS95EiCcNaz4dkpMGYd1hSjPzTR28Rx7nTWwb8yocFVLVJoVWoqHjE8u9FtrSfB9qUufCHHRaS95oKmFE9WTrdNRr5zkQ5xn"),
+		cutl.Must(blob.NameFromString("GUnL66Lyv2Qs4baxPhy59kF4dsB9HWakvTjMBjNGFLT6g")),
+		cutl.Must(hex.DecodeString("0016170c399aa4af538d1fa5c58eb87a48350796f86ab350451ad155dc74d6ca2aab63effca2df99dbd72b548cf522d00e1e53e8de6c3a46f69894e9e4b0c400054a03f8d5857cb1fb55447404b3ab47aea74a7811b98063210c0b2397928e98589e9273c9afaa1100000000000000271018146a18768320ddd9ebc54edc464ccff1fc48dd401dfa4cbc751beb66b186c68be88fe3599d1d36d6974d41221e96d4b1578cf27708f74f79a3514596edeb9f7d100ea923940a5a9566898a746e6833a7f148b8f2e0cb3c4ed9383a225c0a9b")),
+		cutl.Must(hex.DecodeString("751beb66b186c68be88fe3599d1d36d6974d41221e96d4b1578cf27708f74f79a3514596edeb9f7d100ea923940a5a9566898a746e6833a7f148b8f2e0cb3c4ed9383a225c0a9b")),
 	},
 	{
-		golang.Must(common.BlobNameFromString("GUnL66Lyv2Qs4baxPhy59kF4dsB9HWakvTjMBjNGFLT6g")),
-		base58.Decode("17Jk3QJMCABypJWuAivYwMi43gN1KxPVy3qg1e4HYQFe8BCQPVm6GX8aKUfQY1JGDimnrVjYEythtb2CP3SrmYzHf3typ12JKUuCcrHThgZodib6AjLrhV4qZFpqX2DcRscG1oHGX13Tyny8FhGTPio6mgHYze27vPpcNFbp1jx5ETXCTHuur9UpAfag1FSakh8CnKayFegQKEav5rfbfb75Y7hnovYncSPTcerdTnFyVqjDSXNhYophu1o8Nupffv6xpeMJMmcUDWhmm5ofWDpew7x7y"),
-		base58.Decode("GVqyiBNhD53H64AjZHs2hR631JBR7PcDRLSsk6mTaofpFDfZnWWGt6hHsonfW1jUFV4h87cVrQKB6kyKVkPisED1PY22bjGwR"),
+		cutl.Must(blob.NameFromString("GUnL66Lyv2Qs4baxPhy59kF4dsB9HWakvTjMBjNGFLT6g")),
+		cutl.Must(hex.DecodeString("0016170c399aa4af538d1fa5c58eb87a48350796f86ab350451ad155dc74d6ca2aab63effca2df99db7a2d9ef0c9cfac858a60942e250c1266ee5ccafb96fe56e1187ed334ab25d398baff9a69e062237b746b931e3f75ff46196e20d99a1ba7ee6ad8649e8e7375090000000000004e2018e6bd8bf59d9de1ab35a134ed9d15eaaa70064964f648cbf14fe66148a3af71d0a4f4a1817dda8f188b13cc03a122b62529a0ac3894f2654ed362e8ff78d24a7d8c3ba5120bfab4e7d7a8c260f3961732d6efdf25fcde89a530ab8e548e2780")),
+		cutl.Must(hex.DecodeString("4fe66148a3af71d0a4f4a1817dda8f188b13cc03a122b62529a0ac3894f2654ed362e8ff78d24a7d8c3ba5120bfab4e7d7a8c260f3961732d6efdf25fcde89a530ab8e548e2780")),
 	},
 	{
-		golang.Must(common.BlobNameFromString("GUnL66Lyv2Qs4baxPhy59kF4dsB9HWakvTjMBjNGFLT6g")),
-		base58.Decode("17Jk3QJMCABypJWuAivYwMi43gN1KxPVy3qg1e4HYQFe8BCQPVm6GX8aApx2qggEBaUKFT9T3MNwPAicht7Zjiw1Crm2ffEvxFWPupKCcGea11YG4x3NsF2u57V3Z82bhBMfXFHDPywnLnBBx3SQe688vNitGiLzyjBqH9oMCaD3oVKdyKNtE9DmNuTgCRSTnj31FiAaWWzHtqMbVqxNToVp78hhkWudpJDiqJM1Z7DNPK8RGjYDNBrtcbzxfBk4gbSL9usgAGgV7Ty3fiDAmUx8RG2vk"),
-		base58.Decode("RNffUTysjj6v8JgFbNqpUL9CvnLjiDzM9fehH89p7iTFNXQtDjng1woWPnvUDvuZXSTsxw2ndUo6rfPFpZVuip29ZakLbu49n"),
+		cutl.Must(blob.NameFromString("GUnL66Lyv2Qs4baxPhy59kF4dsB9HWakvTjMBjNGFLT6g")),
+		cutl.Must(hex.DecodeString("0016170c399aa4af538d1fa5c58eb87a48350796f86ab350451ad155dc74d6ca2aab63effca2df99db7388571b272b87ba326c5c1f68daac7ebac471986efc9da1bbeb931fc3092753d8ac969c64db5e8d9d8631d8234ac4f3f5174e5fa01dd1818108cadf89b380030000000000004e201872d3ee3f68ff92213de311a2c138c11edc142470b92dd8a07da9d4c95b2d2fcdd3949a68a2844ea6af28d8ac45507eda0a9956503b6fc808e0b4e693f73adb8f50913b33135b9f13a7bc9b9087d71e136d58b6b069d642a8e734cc6bb953c9")),
+		cutl.Must(hex.DecodeString("7da9d4c95b2d2fcdd3949a68a2844ea6af28d8ac45507eda0a9956503b6fc808e0b4e693f73adb8f50913b33135b9f13a7bc9b9087d71e136d58b6b069d642a8e734cc6bb953c9")),
 	},
 }

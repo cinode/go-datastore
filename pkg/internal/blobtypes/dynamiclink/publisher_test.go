@@ -22,10 +22,10 @@ import (
 	"errors"
 	"io"
 	"testing"
-	"testing/iotest"
 
-	"github.com/cinode/go/pkg/common"
-	"github.com/stretchr/testify/require"
+	"github.com/cinode/go-common/blob"
+	"github.com/cinode/go-common/picotestify/require"
+	"github.com/cinode/go-datastore/pkg/internal/utilities/errreader"
 )
 
 func TestCreate(t *testing.T) {
@@ -44,7 +44,7 @@ func TestCreate(t *testing.T) {
 			injectedErr := errors.New("test")
 			r := io.MultiReader(
 				io.LimitReader(rand.Reader, int64(goodBytes)),
-				iotest.ErrReader(injectedErr),
+				errreader.New(injectedErr),
 			)
 
 			dl, err := Create(r)
@@ -72,7 +72,7 @@ func TestFromAuthInfo(t *testing.T) {
 	t.Run("Invalid auth info", func(t *testing.T) {
 		authInfoBytes := authInfo.Bytes()
 		for i := 0; i < len(authInfoBytes)-1; i++ {
-			brokenAuthInfo := common.AuthInfoFromBytes(authInfoBytes[:i])
+			brokenAuthInfo := blob.AuthInfoFromBytes(authInfoBytes[:i])
 			dl2, err := FromAuthInfo(brokenAuthInfo)
 			require.ErrorIs(t, err, ErrInvalidDynamicLinkAuthInfo)
 			require.Nil(t, dl2)
@@ -98,7 +98,7 @@ func TestReNonce(t *testing.T) {
 			injectedErr := errors.New("test")
 			r := io.MultiReader(
 				io.LimitReader(rand.Reader, int64(goodBytes)),
-				iotest.ErrReader(injectedErr),
+				errreader.New(injectedErr),
 			)
 
 			dl2, err := ReNonce(dl1, r)
@@ -118,18 +118,18 @@ func TestPublisherUpdateLinkData(t *testing.T) {
 	require.NotNil(t, pr.r)
 	require.NotNil(t, pr.iv)
 	require.NotNil(t, pr.signature)
-	require.EqualValues(t, 0, pr.contentVersion)
+	require.Equal(t, uint64(0), pr.contentVersion)
 
 	t.Run("successful update", func(t *testing.T) {
 		pr2, key2, err := dl.UpdateLinkData(io.LimitReader(rand.Reader, 32), 1)
 		require.NoError(t, err)
 		require.Equal(t, key, key2)
-		require.EqualValues(t, 1, pr2.contentVersion)
+		require.Equal(t, uint64(1), pr2.contentVersion)
 	})
 
 	t.Run("failed data reader", func(t *testing.T) {
 		injectedErr := errors.New("test")
-		pr2, key2, err := dl.UpdateLinkData(iotest.ErrReader(injectedErr), 3)
+		pr2, key2, err := dl.UpdateLinkData(errreader.New(injectedErr), 3)
 		require.ErrorIs(t, err, injectedErr)
 		require.Nil(t, pr2)
 		require.Nil(t, key2)

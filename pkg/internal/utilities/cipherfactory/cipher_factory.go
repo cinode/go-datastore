@@ -22,7 +22,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/cinode/go/pkg/common"
+	"github.com/cinode/go-common/blob"
 	"golang.org/x/crypto/chacha20"
 )
 
@@ -51,7 +51,7 @@ const (
 	reservedByteForKeyType byte = 0
 )
 
-func StreamCipherReader(key *common.BlobKey, iv *common.BlobIV, r io.Reader) (io.Reader, error) {
+func StreamCipherReader(key *blob.Key, iv *blob.IV, r io.Reader) (io.Reader, error) {
 	stream, err := _cipherForKeyIV(key, iv)
 	if err != nil {
 		return nil, err
@@ -59,7 +59,7 @@ func StreamCipherReader(key *common.BlobKey, iv *common.BlobIV, r io.Reader) (io
 	return &cipher.StreamReader{S: stream, R: r}, nil
 }
 
-func StreamCipherWriter(key *common.BlobKey, iv *common.BlobIV, w io.Writer) (io.Writer, error) {
+func StreamCipherWriter(key *blob.Key, iv *blob.IV, w io.Writer) (io.Writer, error) {
 	stream, err := _cipherForKeyIV(key, iv)
 	if err != nil {
 		return nil, err
@@ -67,7 +67,7 @@ func StreamCipherWriter(key *common.BlobKey, iv *common.BlobIV, w io.Writer) (io
 	return cipher.StreamWriter{S: stream, W: w}, nil
 }
 
-func _cipherForKeyIV(key *common.BlobKey, iv *common.BlobIV) (cipher.Stream, error) {
+func _cipherForKeyIV(key *blob.Key, iv *blob.IV) (cipher.Stream, error) {
 	keyBytes := key.Bytes()
 	if len(keyBytes) == 0 || keyBytes[0] != reservedByteForKeyType {
 		return nil, ErrInvalidEncryptionConfigKeyType

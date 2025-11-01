@@ -1,5 +1,5 @@
 /*
-Copyright © 2023 Bartłomiej Święcki (byo)
+Copyright © 2025 Bartłomiej Święcki (byo)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -19,21 +19,21 @@ package blobtypes
 import (
 	"fmt"
 
-	"github.com/cinode/go/pkg/common"
+	"github.com/cinode/go-common/blob"
 )
 
 var (
-	Invalid     = common.NewBlobType(0x00)
-	Static      = common.NewBlobType(0x01)
-	DynamicLink = common.NewBlobType(0x02)
+	Invalid     = blob.NewType(0x00)
+	Static      = blob.NewType(0x01)
+	DynamicLink = blob.NewType(0x02)
 )
 
-var All = map[string]common.BlobType{
+var All = map[string]blob.Type{
 	"Static":      Static,
 	"DynamicLink": DynamicLink,
 }
 
-func ToName(t common.BlobType) string {
+func ToName(t blob.Type) string {
 	for name, tp := range All {
 		if tp == t {
 			return name

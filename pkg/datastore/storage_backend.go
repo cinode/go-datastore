@@ -14,15 +14,25 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package testutils
+package datastore
 
 import (
-	"testing"
+	"context"
+	"io"
 
-	"github.com/cinode/go-common/picotestify/require"
+	"github.com/cinode/go-common/blob"
 )
 
-func TestTestBlobs(t *testing.T) {
-	require.NotEmpty(t, TestBlobs)
-	require.NotEmpty(t, DynamicLinkPropagationData)
+type WriteCloseCanceller interface {
+	io.WriteCloser
+	Cancel()
+}
+
+type StorageBackend interface {
+	Kind() string
+	Address() string
+	OpenReadStream(ctx context.Context, name *blob.Name) (io.ReadCloser, error)
+	OpenWriteStream(ctx context.Context, name *blob.Name) (WriteCloseCanceller, error)
+	Exists(ctx context.Context, name *blob.Name) (bool, error)
+	Delete(ctx context.Context, name *blob.Name) error
 }

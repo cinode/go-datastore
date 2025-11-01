@@ -1,5 +1,5 @@
 /*
-Copyright © 2023 Bartłomiej Święcki (byo)
+Copyright © 2025 Bartłomiej Święcki (byo)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -22,13 +22,13 @@ import (
 	"crypto/sha256"
 	"io"
 
-	"github.com/cinode/go/pkg/blobtypes"
-	"github.com/cinode/go/pkg/common"
-	"github.com/cinode/go/pkg/internal/utilities/validatingreader"
+	"github.com/cinode/go-common/blob"
+	"github.com/cinode/go-datastore/pkg/blobtypes"
+	"github.com/cinode/go-datastore/pkg/internal/utilities/validatingreader"
 )
 
-func (ds *datastore) openStatic(ctx context.Context, name *common.BlobName) (io.ReadCloser, error) {
-	rc, err := ds.s.openReadStream(ctx, name)
+func (ds *datastore) openStatic(ctx context.Context, name *blob.Name) (io.ReadCloser, error) {
+	rc, err := ds.s.OpenReadStream(ctx, name)
 	if err != nil {
 		return nil, err
 	}
@@ -47,8 +47,8 @@ func (ds *datastore) openStatic(ctx context.Context, name *common.BlobName) (io.
 	}, nil
 }
 
-func (ds *datastore) updateStatic(ctx context.Context, name *common.BlobName, updateStream io.Reader) error {
-	outputStream, err := ds.s.openWriteStream(ctx, name)
+func (ds *datastore) updateStatic(ctx context.Context, name *blob.Name, updateStream io.Reader) error {
+	outputStream, err := ds.s.OpenWriteStream(ctx, name)
 	if err != nil {
 		return err
 	}
